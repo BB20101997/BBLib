@@ -7,8 +7,18 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 
+/**
+ * @author BB20101997
+ *
+ */
 public class FileChooser {
 	
+	/**
+	 * @param frame the parent JFrame
+	 * @param Button the Text of the Approval Button
+	 * @param mode the FileSelectionMode
+	 * @return the chosen File
+	 */
 	public static File chooseFile(JFrame frame, String Button,int mode){
 		
 		JFileChooser jfc = new JFileChooser();
@@ -24,6 +34,12 @@ public class FileChooser {
 		return null;
 	}
 	
+	/**
+	 * @param frame the parent JFrame
+	 * @param Button the Text of the Approval Button
+	 * @param mode the FileSelectionMode
+	 * @return the chosen Files
+	 */
 	public static File[] chooseFiles(JFrame frame,String Button,int mode){
 		JFileChooser jfc = new JFileChooser();
 		jfc.setFileSelectionMode(mode);
