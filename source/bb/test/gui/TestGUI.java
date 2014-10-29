@@ -12,27 +12,27 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
 import bb.test.lib.ButtonNames;
 
-@SuppressWarnings({ "serial", "javadoc" })
+@SuppressWarnings({"serial", "javadoc"})
 public class TestGUI extends JFrame implements ActionListener
 {
 
-	public List<Object>	objList		= new ArrayList<Object>();
-	public List<String>	strList		= new ArrayList<String>();
+	public List<Object> objList = new ArrayList<>();
+	public List<String> strList = new ArrayList<>();
 
-	public JButton		butNewObj	= new JButton(ButtonNames.NEWOBJBUTTON);
-	public JButton		butEnter	= new JButton(ButtonNames.ENTER);
+	public JButton butNewObj = new JButton(ButtonNames.NEWOBJBUTTON);
+	public JButton butEnter  = new JButton(ButtonNames.ENTER);
 
-	public JPanel		mainPanel	= new JPanel();
-	public BoxLayout	BLO			= new BoxLayout(mainPanel, BoxLayout.Y_AXIS);
+	public JPanel    mainPanel = new JPanel();
+	public BoxLayout BLO       = new BoxLayout(mainPanel, BoxLayout.Y_AXIS);
 
-	public JTextArea	ConsoleArea	= new JTextArea();
-	public JTextField	InputField	= new JTextField();
+	public JTextArea  ConsoleArea = new JTextArea();
+	public JTextField InputField  = new JTextField();
 
-	public TestGUI()
-	{
+	public TestGUI() {
 
 		mainPanel.setLayout(BLO);
 		mainPanel.add(ConsoleArea);
@@ -45,6 +45,7 @@ public class TestGUI extends JFrame implements ActionListener
 		add(mainPanel);
 		pack();
 		setVisible(true);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 	}
 
