@@ -1,49 +1,39 @@
 package bb.test.gui;
 
+import bb.test.lib.ButtonNames;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-
-import bb.test.lib.ButtonNames;
-
-@SuppressWarnings({ "serial", "rawtypes", "javadoc" })
+@SuppressWarnings({"serial", "rawtypes", "javadoc"})
 public class ObjCreateDialog extends JDialog implements ActionListener
 {
 
-	private Class				clazz;
+	private Class clazz;
 	@SuppressWarnings("unused")
-	private Object				obj				= null;
+	private Object     obj         = null;
 	@SuppressWarnings("unused")
-	private JTextField			objName			= new JTextField("Please enter a name for the Object!");
-	private JTextField			clazzString		= new JTextField("Please enter a fully quallified Class path!");
-	private Object[]			objA;
-	private JComponent[]		jcA;
-	private Class[]				cA;
-	private JList<Constructor>	constructors	= new JList<Constructor>();
-	private JButton				enterButton		= new JButton(ButtonNames.ENTER);
-	private JPanel				paraPanel		= new JPanel();
-	private JScrollPane			paraScroll		= new JScrollPane(paraPanel);
-	private Box					b				= new Box(BoxLayout.Y_AXIS);
-	private Object				retObject		= null;
-	private int					state			= 0;
+	private JTextField objName     = new JTextField("Please enter a name for the Object!");
+	private JTextField clazzString = new JTextField("Please enter a fully qualified Class path!");
+	private Object[]     objA;
+	private JComponent[] jcA;
+	private Class[]      cA;
+	private JList<Constructor> constructors = new JList<>();
+	private JButton            enterButton  = new JButton(ButtonNames.ENTER);
+	private JPanel             paraPanel    = new JPanel();
+	private JScrollPane        paraScroll   = new JScrollPane(paraPanel);
+	private Box                b            = new Box(BoxLayout.Y_AXIS);
+	private Object             retObject    = null;
+	private int                state        = 0;
 
-	public ObjCreateDialog(JFrame j)
-	{
+	public ObjCreateDialog(JFrame j) {
 
 		super(j, "Create a new Object", true);
 		enterButton.addActionListener(this);
@@ -52,24 +42,20 @@ public class ObjCreateDialog extends JDialog implements ActionListener
 
 	}
 
-	public ObjCreateDialog(JDialog j, String name)
-	{
+	public ObjCreateDialog(JDialog j, String name) {
 
 		super(j, "New Object", true);
 		state = 1;
 		String ct = name;
 		System.out.println("String : " + ct);
-		try
-		{
+		try {
 			clazz = Class.forName(ct);
-		}
-		catch(ClassNotFoundException e2)
-		{
+		} catch(ClassNotFoundException e2) {
 			e2.printStackTrace();
 		}
 		System.out.println("Class : " + clazz);
-		Constructor[] contsructs = clazz.getConstructors();
-		constructors.setListData(contsructs);
+		Constructor[] constructs = clazz.getConstructors();
+		constructors.setListData(constructs);
 		enterButton.addActionListener(this);
 		add(b);
 		guiSetupByState();
@@ -99,7 +85,7 @@ public class ObjCreateDialog extends JDialog implements ActionListener
 		pack();
 	}
 
-	private Class getWrapperClassfromPrimitive(Class t)
+	private Class getWrapperClassFromPrimitive(Class t)
 	{
 
 		if(t == int.class) { return Integer.class; }
@@ -113,26 +99,26 @@ public class ObjCreateDialog extends JDialog implements ActionListener
 
 	}
 
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({"unchecked"})
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
 
-		if((state == 2) && e.getActionCommand().equals(ButtonNames.NEWOBJBUTTON))
+		if((state == 2)
+				&& (e.getActionCommand().equals(ButtonNames.NEWOBJBUTTON) || e.getActionCommand().equals(ButtonNames.CHANGEOBJ)))
 		{
 			JComponent j = (JComponent) e.getSource();
 			if(j instanceof JButton)
 			{
 				JButton jb = (JButton) j;
-				List<JComponent> jL = new ArrayList<JComponent>();
-				for(JComponent jC : jcA)
-				{
-					jL.add(jC);
-				}
+				List<JComponent> jL = new ArrayList<>();
+				Collections.addAll(jL, jcA);
 
 				int i = jL.indexOf(jb);
 				ObjCreateDialog diaL = new ObjCreateDialog(this, cA[i].getName());
 				diaL.setVisible(true);
+				objA[i] = diaL.getReturn();
+				jb.setText(ButtonNames.CHANGEOBJ);
 				guiSetupByState();
 
 			}
@@ -217,7 +203,7 @@ public class ObjCreateDialog extends JDialog implements ActionListener
 								{
 									if(cA[i] != char.class)
 									{
-										m = getWrapperClassfromPrimitive(cA[i]).getMethod("valueOf", String.class);
+										m = getWrapperClassFromPrimitive(cA[i]).getMethod("valueOf", String.class);
 									}
 									else
 									{
@@ -260,7 +246,7 @@ public class ObjCreateDialog extends JDialog implements ActionListener
 					try
 					{
 						retObject = constructors.getSelectedValue().newInstance(objA);
-
+						System.out.println("Created Object of type : " + objA.getClass());
 						setVisible(false);
 					}
 					catch(InstantiationException | IllegalAccessException
