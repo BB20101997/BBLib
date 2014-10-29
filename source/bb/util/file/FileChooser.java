@@ -1,10 +1,8 @@
 package bb.util.file;
 
 
+import javax.swing.*;
 import java.io.File;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 
 
 /**
@@ -26,8 +24,8 @@ public class FileChooser {
 		jfc.setMultiSelectionEnabled(false);
 		jfc.setAcceptAllFileFilterUsed(true);
 		
-		int succes = jfc.showDialog(frame,Button);
-		if(succes == JFileChooser.APPROVE_OPTION){
+		int success = jfc.showDialog(frame,Button);
+		if(success == JFileChooser.APPROVE_OPTION){
 			File f = jfc.getSelectedFile();
 			return f;
 		}
@@ -46,8 +44,8 @@ public class FileChooser {
 		jfc.setMultiSelectionEnabled(false);
 		jfc.setAcceptAllFileFilterUsed(true);
 		
-		int succes = jfc.showDialog(frame,Button);
-		if(succes == JFileChooser.APPROVE_OPTION){
+		int success = jfc.showDialog(frame,Button);
+		if(success == JFileChooser.APPROVE_OPTION){
 			File[] f = jfc.getSelectedFiles();
 			return f;
 		}
