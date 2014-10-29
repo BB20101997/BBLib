@@ -1,22 +1,11 @@
 package bb.util.gui;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
-import javax.swing.UIManager.LookAndFeelInfo;
 
 
 public class ChangeDialog extends JDialog implements ActionListener,
@@ -24,34 +13,34 @@ ItemListener{
 
 	@ SuppressWarnings("rawtypes")
 	public JComboBox combo1;
-	public JButton ok,abbrechen;
-	public List<String> list1 = new ArrayList<String>();
-	public List<UIManager.LookAndFeelInfo> lookAndFeel = new ArrayList<UIManager.LookAndFeelInfo>();
-	private UIManager.LookAndFeelInfo LAF; 
-	private static final long	serialVersionUID	= 1L;
+	public JButton ok, abbrechen;
+	public List<String>                    list1       = new ArrayList<>();
+	public List<UIManager.LookAndFeelInfo> lookAndFeel = new ArrayList<>();
+	private UIManager.LookAndFeelInfo LAF;
+	private static final long serialVersionUID = 1L;
 
 
-	@ Override
+	@Override
 	public void itemStateChanged(ItemEvent arg0) {
 
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	@ Override
+	@Override
 	public void actionPerformed(ActionEvent arg0) {
 
-		switch(arg0.getActionCommand()){
-			case("Ok"):{
+		switch(arg0.getActionCommand()) {
+			case ("Ok"): {
 				LAF = lookAndFeel.get(combo1.getSelectedIndex());
-						
+
 				setVisible(false);
-			return;
+				return;
 			}
-			
-		default: {
-			setVisible(false);
-			return;}
+
+			default: {
+				setVisible(false);
+		}
 		}
 				
 	}
