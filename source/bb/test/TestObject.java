@@ -16,8 +16,14 @@ public class TestObject
 	}
 
 	public TestObject(int i)
+
 	{
 
 		System.out.println(i);
+	}
+
+	public TestObject(TestObject to)
+	{
+		System.out.print(to);
 	}
 }
