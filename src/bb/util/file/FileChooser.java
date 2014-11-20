@@ -26,8 +26,7 @@ public class FileChooser {
 		
 		int success = jfc.showDialog(frame,Button);
 		if(success == JFileChooser.APPROVE_OPTION){
-			File f = jfc.getSelectedFile();
-			return f;
+			return jfc.getSelectedFile();
 		}
 		return null;
 	}
@@ -46,8 +45,7 @@ public class FileChooser {
 		
 		int success = jfc.showDialog(frame,Button);
 		if(success == JFileChooser.APPROVE_OPTION){
-			File[] f = jfc.getSelectedFiles();
-			return f;
+			return jfc.getSelectedFiles();
 		}
 		return null;
 	}

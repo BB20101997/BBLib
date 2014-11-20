@@ -25,13 +25,13 @@ public class ObjCreateDialog extends JDialog implements ActionListener
 	private Object[]     objA;
 	private JComponent[] jcA;
 	private Class[]      cA;
-	private JList<Constructor> constructors = new JList<>();
-	private JButton            enterButton  = new JButton(ButtonNames.ENTER);
-	private JPanel             paraPanel    = new JPanel();
-	private JScrollPane        paraScroll   = new JScrollPane(paraPanel);
-	private Box                b            = new Box(BoxLayout.Y_AXIS);
-	private Object             retObject    = null;
-	private int                state        = 0;
+	private final JList<Constructor> constructors = new JList<>();
+	private       JButton            enterButton  = new JButton(ButtonNames.ENTER);
+	private       JPanel             paraPanel    = new JPanel();
+	private       JScrollPane        paraScroll   = new JScrollPane(paraPanel);
+	private       Box                b            = new Box(BoxLayout.Y_AXIS);
+	private       Object             retObject    = null;
+	private       int                state        = 0;
 
 	public ObjCreateDialog(JFrame j) {
 
@@ -46,10 +46,9 @@ public class ObjCreateDialog extends JDialog implements ActionListener
 
 		super(j, "New Object", true);
 		state = 1;
-		String ct = name;
-		System.out.println("String : " + ct);
+		System.out.println("String : " + name);
 		try {
-			clazz = Class.forName(ct);
+			clazz = Class.forName(name);
 		} catch(ClassNotFoundException e2) {
 			e2.printStackTrace();
 		}
@@ -198,7 +197,7 @@ public class ObjCreateDialog extends JDialog implements ActionListener
 							Object s = jT.getText();
 							if(cA[i].isPrimitive())
 							{
-								Method m = null;
+								Method m;
 								try
 								{
 									if(cA[i] != char.class)

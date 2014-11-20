@@ -11,13 +11,11 @@ import java.util.List;
 public class ChangeDialog extends JDialog implements ActionListener,
 ItemListener{
 
-	@ SuppressWarnings("rawtypes")
-	public JComboBox combo1;
-	public JButton ok, abbrechen;
-	public List<String>                    list1       = new ArrayList<>();
-	public List<UIManager.LookAndFeelInfo> lookAndFeel = new ArrayList<>();
+	@SuppressWarnings("rawtypes")
+	private JComboBox combo1;
+	private final List<String>                    list1       = new ArrayList<>();
+	private final List<UIManager.LookAndFeelInfo> lookAndFeel = new ArrayList<>();
 	private UIManager.LookAndFeelInfo LAF;
-	private static final long serialVersionUID = 1L;
 
 
 	@Override
@@ -52,8 +50,8 @@ ItemListener{
 		setResizable(false);
 		
 		combo1 = new JComboBox();
-		ok = new JButton("Ok");
-		abbrechen = new JButton("Abbrechen");
+		JButton ok = new JButton("Ok");
+		JButton abbrechen = new JButton("Abbrechen");
 		
 		getLookAndFeels();
 		
@@ -64,8 +62,8 @@ ItemListener{
 		addWindowListener(new MainWindowListener());
 		
 		add("North",combo1);
-		add("West",ok);
-		add("East",abbrechen);
+		add("West", ok);
+		add("East", abbrechen);
 		
 		ok.addActionListener(this);
 		abbrechen.addActionListener(this);
@@ -75,7 +73,7 @@ ItemListener{
 	}
 	
 	@ SuppressWarnings("unchecked")
-	public void getLookAndFeels(){
+	void getLookAndFeels(){
 		UIManager.LookAndFeelInfo a[] = UIManager.getInstalledLookAndFeels();
 		for(int i = 0;i<a.length;i++){
 				list1.add(a[i].getName());
@@ -88,7 +86,7 @@ ItemListener{
 		return LAF;
 	
 	}
-	class MainWindowListener extends WindowAdapter {
+	private class MainWindowListener extends WindowAdapter {
 
 		public void windowClosing(WindowEvent e) {
 			java.awt.Toolkit.getDefaultToolkit().beep();
