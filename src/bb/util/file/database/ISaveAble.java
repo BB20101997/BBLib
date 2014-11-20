@@ -1,6 +1,6 @@
 package bb.util.file.database;
 
-public abstract class ISaveAble {
+public interface ISaveAble {
 	
 	public abstract void writeToFileWriter(FileWriter fw);
 	
