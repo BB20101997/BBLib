@@ -12,7 +12,7 @@ public class ChangeDialog extends JDialog implements ActionListener,
 ItemListener{
 
 	@SuppressWarnings("rawtypes")
-	private JComboBox combo1;
+	private final JComboBox combo1;
 	private final List<String>                    list1       = new ArrayList<>();
 	private final List<UIManager.LookAndFeelInfo> lookAndFeel = new ArrayList<>();
 	private UIManager.LookAndFeelInfo LAF;
