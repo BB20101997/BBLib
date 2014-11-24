@@ -5,19 +5,22 @@ import bb.util.file.database.ISaveAble;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
-import java.io.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by BB20101997 on 20.11.2014.
  */
-public class FileWriterGUI extends JFrame {
+public class FileWriterGUI extends JPanel implements ListSelectionListener {
 
 	public static void main(String[] tArgs) {
 		FileWriter FW = new FileWriter();
 		File f = new File("B://Test/FileWriterTest.fw");
 
-		FW.add(true,"Boolean");
-		FW.add("Test String","String");
+		FW.add(true, "Boolean");
+		FW.add("Test String", "String");
 		FileWriter fw = FW.add(new ISaveAble() {
 			@Override
 			public void writeToFileWriter(FileWriter fw) {
@@ -28,12 +31,13 @@ public class FileWriterGUI extends JFrame {
 			public void loadFromFileWriter(FileWriter fw) {
 
 			}
-		},"FileWriter");
+		}, "FileWriter");
 
-		fw.add("Test inner FileWriter","IFW");
+		fw.add("Test inner FileWriter", "IFW");
 
 		if(!f.exists()) {
 			try {
+				//noinspection ResultOfMethodCallIgnored
 				f.createNewFile();
 			} catch(IOException e) {
 				e.printStackTrace();
@@ -41,21 +45,26 @@ public class FileWriterGUI extends JFrame {
 		}
 
 		try {
-			OutputStream os = new FileOutputStream(f);
-			InputStream is = new FileInputStream(f);
-			FW.writeToStream(os);
-			FW.readFromStream(is);
+			FW.writeToFile(f);
+			FW.readFromFile(f);
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-
-		new FileWriterGUI().setFileWriter(FW);
-
+		FileWriterGUI FWG = new FileWriterGUI();
+		FWG.setFileWriter(FW);
+		JFrame frame = new JFrame();
+		frame.add(FWG);
+		frame.pack();
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 
 	public FileWriter FW;
+	public JList      jList;
+	public Box        mainBox;
+	public JPanel     diplayValue;
 
-	public ListModel<String> listModel = new ListModel<String>() {
+	public final ListModel<String> listModel = new ListModel<String>() {
 
 		@Override
 		public int getSize() {
@@ -89,9 +98,15 @@ public class FileWriterGUI extends JFrame {
 	}
 
 	private void setup() {
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		add(new JList(listModel));
-		setVisible(true);
+		mainBox = Box.createHorizontalBox();
+		//noinspection unchecked
+		jList = new JList(listModel);
+		jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jList.addListSelectionListener(this);
+		diplayValue = new JPanel();
+		mainBox.add(jList);
+		mainBox.add(diplayValue);
+		add(mainBox);
 	}
 
 	public FileWriterGUI(FileWriter fw) {
@@ -104,6 +119,35 @@ public class FileWriterGUI extends JFrame {
 		updateStruckture();
 	}
 
-	private void updateStruckture() {}
+	private void updateStruckture() {
+		int i = jList.getSelectedIndex();
+		if(i > -1) {
+			String name = FW.getObjectNames().get(i);
+			FileWriter.Types type = FW.getObjectType(name);
+			switch(type) {
+				case ISAVEABLE: {
+					diplayValue = new FileWriterGUI((FileWriter) FW.get(name));
+					diplayValue.setBorder(BorderFactory.createLoweredBevelBorder());
+					break;
+				}
 
+				default: {
+					diplayValue = new JPanel();
+					diplayValue.setBorder(BorderFactory.createLoweredBevelBorder());
+					JTextField tf = new JTextField(String.valueOf(FW.get(name)));
+					diplayValue.add(tf);
+				}
+			}
+			mainBox.removeAll();
+			mainBox.add(jList);
+			mainBox.add(diplayValue);
+			revalidate();
+			getParent().setSize(getParent().getPreferredSize());
+		}
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		updateStruckture();
+	}
 }
