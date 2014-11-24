@@ -1,9 +1,6 @@
 package bb.util.file.database;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,20 +18,20 @@ public final class FileWriter implements ISaveAble {
 
 	// kann bis mindestens F8FF fortgeführt werden
 
-	private static final char splitCharacter = '\uF8F0';
-	private static final char typeSeparator  = '\uF8F5';
+	public static final char splitCharacter = '\uF8F0';
+	public static final char typeSeparator  = '\uF8F5';
 
-	private static final char innerFileWriterBeginn = '\uF8F7';
-	public static final  char innerFileWriterEnd    = '\uF8F8';
+	public static final char innerFileWriterBeginn = '\uF8F7';
+	public static final char innerFileWriterEnd    = '\uF8F8';
 
-	private static final char beginOfString = '\uF8F1';
-	private static final char endOfString   = '\uF8F2';
+	public static final char beginOfString = '\uF8F1';
+	public static final char endOfString   = '\uF8F2';
 
-	private static final char endOfFileWriter = '\uF8F4';
+	public static final char endOfFileWriter = '\uF8F4';
 
-	public static final String VersionName = /*"\uF8F6" +*/ "$VERSION$";
+	public static final String VersionName = "$VERSION$";
 
-	private static final String LENGTH = "length";
+	public static final String LENGTH = "length";
 
 	/**
 	 * @author BB20101997
@@ -126,7 +123,6 @@ public final class FileWriter implements ISaveAble {
 				if(o instanceof Integer) {
 					int length = (int) o;
 					char[] carr = new char[length];
-					char c;
 					for(int i = 0; i < length; i++) {
 						o = fw.get("" + i);
 						carr[i] = (char) o;
@@ -144,14 +140,19 @@ public final class FileWriter implements ISaveAble {
 	 *
 	 * @return if reading was successful
 	 */
-	public boolean readFromStream(InputStream is) {
+	public void readFromStream(InputStream is) throws IOException {
 
 		InputStreamReader ISR = new InputStreamReader(is);
-		return readFromInputStreamReader(ISR);
+		readFromInputStreamReader(ISR);
 
 	}
 
-	private boolean readFromInputStreamReader(InputStreamReader ISR) {
+	public void readFromFile(File f) throws IOException {
+		InputStream is = new FileInputStream(f);
+		readFromStream(is);
+	}
+
+	private void readFromInputStreamReader(InputStreamReader ISR) throws IOException {
 		ObjectList.clear();
 		ObjectNames.clear();
 		ObjectType.clear();
@@ -169,83 +170,74 @@ public final class FileWriter implements ISaveAble {
 		boolean inString = false;
 
 		FileWriter fw = null;
-		try {
-			loop:
-			while((i = ISR.read()) != -1) {
-				c = (char) i;
+		loop:
+		while((i = ISR.read()) != -1) {
+			c = (char) i;
 
-				if(!inString) {
+			if(!inString) {
 
-					switch(c) {
+				switch(c) {
 
-						case endOfFileWriter: {
-							break loop;
+					case endOfFileWriter: {
+						break loop;
+					}
+					case innerFileWriterEnd: {
+						continue loop;
+					}
+
+					case splitCharacter: {
+						if(type == Types.ISAVEABLE || type == Types.STRING) {
+							toObject(name, type, fw);
+
+						} else {
+							toObject(name, type, s);
 						}
-						case innerFileWriterEnd: {
-							continue loop;
-						}
+						position = 0;
+						s = "";
+						continue loop;
+					}
 
-						case splitCharacter: {
-							if(type == Types.ISAVEABLE || type == Types.STRING) {
-								toObject(name, type, fw);
-
-							} else {
-								toObject(name, type, s);
+					case innerFileWriterBeginn: {
+						fw = new FileWriter();
+						fw.readFromInputStreamReader(ISR);
+						continue loop;
+					}
+					case typeSeparator: {
+						switch(position) {
+							case 0: {
+								name = s;
+								break;
 							}
-							position = 0;
-							s = "";
-							continue loop;
-						}
-
-						case innerFileWriterBeginn: {
-							fw = new FileWriter();
-							fw.readFromInputStreamReader(ISR);
-							continue loop;
-						}
-						case typeSeparator: {
-							switch(position) {
-								case 0: {
-									name = s;
-									break;
+							case 1: {
+								try {
+									type = Types.values()[Integer.valueOf(s)];
+								} catch(NumberFormatException e) {
+									System.out.println(name);
+									throw e;
 								}
-								case 1: {
-									try {
-										type = Types.values()[Integer.valueOf(s)];
-									} catch(NumberFormatException e) {
-										System.out.println(name);
-										throw e;
-									}
-									break;
-								}
+								break;
 							}
-							s = "";
-							position++;
-							continue loop;
 						}
+						s = "";
+						position++;
+						continue loop;
 					}
 				}
-
-				if(c == endOfString && s.length() != 0) {
-					inString = false;
-				}
-
-				if(inString) {
-					s += c;
-				}
-
-				if(c == beginOfString) {
-					inString = true;
-				}
 			}
-		} catch(
-				IOException e
-				)
 
-		{
-			e.printStackTrace();
+			if(c == endOfString && s.length() != 0) {
+				inString = false;
+			}
+
+			if(inString) {
+				s += c;
+			}
+
+			if(c == beginOfString) {
+				inString = true;
+			}
 		}
 
-		return true;
 	}
 
 	/**
@@ -261,6 +253,11 @@ public final class FileWriter implements ISaveAble {
 			writeObjectToStream(ObjectList.get(i), ObjectType.get(i), ObjectNames.get(i), os);
 		}
 		os.write(String.valueOf(endOfFileWriter).getBytes());
+	}
+
+	public void writeToFile(File f) throws IOException {
+		OutputStream os = new FileOutputStream(f);
+		writeToStream(os);
 	}
 
 	/**
@@ -293,8 +290,8 @@ public final class FileWriter implements ISaveAble {
 			case STRING: {
 				FileWriter fw = new FileWriter();
 				fw.add(((String) obj).length(), LENGTH);
-				for(int i = 0;i<((String) obj).length();i++){
-					fw.add(((String) obj).charAt(i),String.valueOf(i));
+				for(int i = 0; i < ((String) obj).length(); i++) {
+					fw.add(((String) obj).charAt(i), String.valueOf(i));
 				}
 				os.write(String.valueOf(innerFileWriterBeginn).getBytes());
 				fw.writeToStream(os);
