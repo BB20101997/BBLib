@@ -18,18 +18,18 @@ public class ObjCreateDialog extends JDialog implements ActionListener
 
 	private Class clazz;
 	@SuppressWarnings("unused")
-	private Object     obj         = null;
+	private       Object     obj         = null;
 	@SuppressWarnings("unused")
-	private JTextField objName     = new JTextField("Please enter a name for the Object!");
-	private JTextField clazzString = new JTextField("Please enter a fully qualified Class path!");
+	private       JTextField objName     = new JTextField("Please enter a name for the Object!");
+	private final JTextField clazzString = new JTextField("Please enter a fully qualified Class path!");
 	private Object[]     objA;
 	private JComponent[] jcA;
 	private Class[]      cA;
 	private final JList<Constructor> constructors = new JList<>();
-	private       JButton            enterButton  = new JButton(ButtonNames.ENTER);
-	private       JPanel             paraPanel    = new JPanel();
-	private       JScrollPane        paraScroll   = new JScrollPane(paraPanel);
-	private       Box                b            = new Box(BoxLayout.Y_AXIS);
+	private final JButton            enterButton  = new JButton(ButtonNames.ENTER);
+	private final JPanel             paraPanel    = new JPanel();
+	private final JScrollPane        paraScroll   = new JScrollPane(paraPanel);
+	private final Box                b            = new Box(BoxLayout.Y_AXIS);
 	private       Object             retObject    = null;
 	private       int                state        = 0;
 
