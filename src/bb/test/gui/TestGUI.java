@@ -16,23 +16,21 @@ public class TestGUI extends JFrame implements ActionListener
 	public List<Object> objList = new ArrayList<>();
 	public List<String> strList = new ArrayList<>();
 
-	private JButton butNewObj = new JButton(ButtonNames.NEWOBJBUTTON);
-	public  JButton butEnter  = new JButton(ButtonNames.ENTER);
-
-	private JPanel    mainPanel = new JPanel();
-	private BoxLayout BLO       = new BoxLayout(mainPanel, BoxLayout.Y_AXIS);
-
-	private JTextArea  ConsoleArea = new JTextArea();
-	private JTextField InputField  = new JTextField();
+	public        JButton butEnter  = new JButton(ButtonNames.ENTER);
 
 	public TestGUI() {
 
+		JPanel mainPanel = new JPanel();
+		BoxLayout BLO = new BoxLayout(mainPanel, BoxLayout.Y_AXIS);
 		mainPanel.setLayout(BLO);
-		mainPanel.add(ConsoleArea);
-		mainPanel.add(InputField);
+		JTextArea consoleArea = new JTextArea();
+		mainPanel.add(consoleArea);
+		JTextField inputField = new JTextField();
+		mainPanel.add(inputField);
 		pack();
-		InputField.setMaximumSize(new Dimension(InputField.getMaximumSize().width, InputField.getPreferredSize().height));
-		InputField.setMinimumSize(new Dimension(InputField.getMinimumSize().width, InputField.getPreferredSize().height));
+		inputField.setMaximumSize(new Dimension(inputField.getMaximumSize().width, inputField.getPreferredSize().height));
+		inputField.setMinimumSize(new Dimension(inputField.getMinimumSize().width, inputField.getPreferredSize().height));
+		JButton butNewObj = new JButton(ButtonNames.NEWOBJBUTTON);
 		mainPanel.add(butNewObj);
 		butNewObj.addActionListener(this);
 		add(mainPanel);
