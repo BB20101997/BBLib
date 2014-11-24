@@ -4,8 +4,8 @@ package bb.util.exceptions;
 public class WrongVersionException extends Exception
 {
 
-	float	versionExpected;
-	float	versionGotten;
+	final float versionExpected;
+	final float versionGotten;
 
 	/**
 	 * @param ex
