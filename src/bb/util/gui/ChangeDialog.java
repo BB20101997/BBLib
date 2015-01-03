@@ -8,22 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ChangeDialog extends JDialog implements ActionListener,
-ItemListener{
+public class ChangeDialog extends JDialog implements ActionListener{
 
 	@SuppressWarnings("rawtypes")
 	private final JComboBox combo1;
 	private final List<String>                    list1       = new ArrayList<>();
 	private final List<UIManager.LookAndFeelInfo> lookAndFeel = new ArrayList<>();
 	private UIManager.LookAndFeelInfo LAF;
-
-
-	@Override
-	public void itemStateChanged(ItemEvent arg0) {
-
-		// TODO Auto-generated method stub
-
-	}
+	final   JFrame                    j;
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -31,7 +23,18 @@ ItemListener{
 		switch(arg0.getActionCommand()) {
 			case ("Ok"): {
 				LAF = lookAndFeel.get(combo1.getSelectedIndex());
+				if(j != null) {
+					try {
+						UIManager.setLookAndFeel(LAF.getClassName());
+					} catch(ClassNotFoundException | InstantiationException
+							| IllegalAccessException | UnsupportedLookAndFeelException e) {
 
+						System.err.println(e);
+					}
+					SwingUtilities.updateComponentTreeUI(j);
+					j.pack();
+					j.revalidate();
+				}
 				setVisible(false);
 				return;
 			}
@@ -47,6 +50,7 @@ ItemListener{
 	@ SuppressWarnings("rawtypes")
 	public ChangeDialog(JFrame J,String Title){
 		super(J, Title, true);
+		j = J;
 		setResizable(false);
 		
 		combo1 = new JComboBox();
