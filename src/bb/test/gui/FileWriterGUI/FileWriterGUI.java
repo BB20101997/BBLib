@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * Created by BB20101997 on 20.11.2014.
  */
-public class FileWriterGUI extends JPanel implements ListSelectionListener {
+class FileWriterGUI extends JPanel implements ListSelectionListener {
 
 	public static void main(String[] tArgs) {
 		FileWriter FW = new FileWriter();
@@ -59,12 +59,12 @@ public class FileWriterGUI extends JPanel implements ListSelectionListener {
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 
-	public FileWriter FW;
-	public JList      jList;
-	public Box        mainBox;
-	public JPanel     diplayValue;
+	private FileWriter FW;
+	private JList      jList;
+	private Box        mainBox;
+	private JPanel     displayValue;
 
-	public final ListModel<String> listModel = new ListModel<String>() {
+	private final ListModel<String> listModel = new ListModel<String>() {
 
 		@Override
 		public int getSize() {
@@ -93,7 +93,7 @@ public class FileWriterGUI extends JPanel implements ListSelectionListener {
 		}
 	};
 
-	public FileWriterGUI() {
+	private FileWriterGUI() {
 		setup();
 	}
 
@@ -103,44 +103,44 @@ public class FileWriterGUI extends JPanel implements ListSelectionListener {
 		jList = new JList(listModel);
 		jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jList.addListSelectionListener(this);
-		diplayValue = new JPanel();
+		displayValue = new JPanel();
 		mainBox.add(jList);
-		mainBox.add(diplayValue);
+		mainBox.add(displayValue);
 		add(mainBox);
 	}
 
-	public FileWriterGUI(FileWriter fw) {
+	private FileWriterGUI(FileWriter fw) {
 		this();
 		setFileWriter(fw);
 	}
 
-	public void setFileWriter(FileWriter fw) {
+	void setFileWriter(FileWriter fw) {
 		FW = fw;
-		updateStruckture();
+		updateStructure();
 	}
 
-	private void updateStruckture() {
+	private void updateStructure() {
 		int i = jList.getSelectedIndex();
 		if(i > -1) {
 			String name = FW.getObjectNames().get(i);
 			FileWriter.Types type = FW.getObjectType(name);
 			switch(type) {
 				case ISAVEABLE: {
-					diplayValue = new FileWriterGUI((FileWriter) FW.get(name));
-					diplayValue.setBorder(BorderFactory.createLoweredBevelBorder());
+					displayValue = new FileWriterGUI((FileWriter) FW.get(name));
+					displayValue.setBorder(BorderFactory.createLoweredBevelBorder());
 					break;
 				}
 
 				default: {
-					diplayValue = new JPanel();
-					diplayValue.setBorder(BorderFactory.createLoweredBevelBorder());
+					displayValue = new JPanel();
+					displayValue.setBorder(BorderFactory.createLoweredBevelBorder());
 					JTextField tf = new JTextField(String.valueOf(FW.get(name)));
-					diplayValue.add(tf);
+					displayValue.add(tf);
 				}
 			}
 			mainBox.removeAll();
 			mainBox.add(jList);
-			mainBox.add(diplayValue);
+			mainBox.add(displayValue);
 			revalidate();
 			getParent().setSize(getParent().getPreferredSize());
 		}
@@ -148,6 +148,6 @@ public class FileWriterGUI extends JPanel implements ListSelectionListener {
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		updateStruckture();
+		updateStructure();
 	}
 }

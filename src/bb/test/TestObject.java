@@ -1,6 +1,6 @@
 package bb.test;
 
-public class TestObject
+class TestObject
 {
 
 	public TestObject()

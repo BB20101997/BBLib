@@ -1,7 +1,7 @@
 import bb.test.gui.TestGUI;
 
 @SuppressWarnings("javadoc")
-public class Main
+class Main
 {
 
 	public static void main(String[] args)

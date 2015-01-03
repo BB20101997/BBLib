@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class Image
+class Image
 {
 
 	public static BufferedImage loadImage(String s)

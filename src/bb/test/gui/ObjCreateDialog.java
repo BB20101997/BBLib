@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings({"serial", "rawtypes", "javadoc"})
-public class ObjCreateDialog extends JDialog implements ActionListener
+class ObjCreateDialog extends JDialog implements ActionListener
 {
 
 	private Class clazz;
@@ -42,7 +42,7 @@ public class ObjCreateDialog extends JDialog implements ActionListener
 
 	}
 
-	public ObjCreateDialog(JDialog j, String name) {
+	private ObjCreateDialog(JDialog j, String name) {
 
 		super(j, "New Object", true);
 		state = 1;
@@ -258,7 +258,7 @@ public class ObjCreateDialog extends JDialog implements ActionListener
 		}
 	}
 
-	public Object getReturn()
+	Object getReturn()
 	{
 
 		return retObject;
