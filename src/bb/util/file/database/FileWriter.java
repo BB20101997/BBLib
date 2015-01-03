@@ -14,24 +14,24 @@ public final class FileWriter implements ISaveAble {
 	 * The Version of the FileWriter
 	 */
 	@SuppressWarnings("FieldCanBeLocal")
-	public final float VERSION = 0.02f;
+	private final float VERSION = 0.02f;
 
 	// kann bis mindestens F8FF fortgeführt werden
 
-	public static final char splitCharacter = '\uF8F0';
-	public static final char typeSeparator  = '\uF8F5';
+	private static final char splitCharacter = '\uF8F0';
+	private static final char typeSeparator  = '\uF8F5';
 
-	public static final char innerFileWriterBeginn = '\uF8F7';
-	public static final char innerFileWriterEnd    = '\uF8F8';
+	private static final char innerFileWriterBeginn = '\uF8F7';
+	private static final char innerFileWriterEnd    = '\uF8F8';
 
-	public static final char beginOfString = '\uF8F1';
-	public static final char endOfString   = '\uF8F2';
+	private static final char beginOfString = '\uF8F1';
+	private static final char endOfString   = '\uF8F2';
 
-	public static final char endOfFileWriter = '\uF8F4';
+	private static final char endOfFileWriter = '\uF8F4';
 
-	public static final String VersionName = "$VERSION$";
+	private static final String VersionName = "$VERSION$";
 
-	public static final String LENGTH = "length";
+	private static final String LENGTH = "length";
 
 	/**
 	 * @author BB20101997
@@ -140,7 +140,7 @@ public final class FileWriter implements ISaveAble {
 	 *
 	 * @return if reading was successful
 	 */
-	public void readFromStream(InputStream is) throws IOException {
+	void readFromStream(InputStream is) throws IOException {
 
 		InputStreamReader ISR = new InputStreamReader(is);
 		readFromInputStreamReader(ISR);
@@ -247,7 +247,7 @@ public final class FileWriter implements ISaveAble {
 	 *
 	 * @throws IOException is thrown when the writing of one Object to Steam fails
 	 */
-	public void writeToStream(OutputStream os) throws IOException {
+	void writeToStream(OutputStream os) throws IOException {
 
 		for(int i = 0; i < ObjectList.size(); i++) {
 			writeObjectToStream(ObjectList.get(i), ObjectType.get(i), ObjectNames.get(i), os);
@@ -347,7 +347,7 @@ public final class FileWriter implements ISaveAble {
 	 * @param i    the byte to be added
 	 * @param name the name of the byte
 	 */
-	public void add(byte i, String name) {
+	void add(byte i, String name) {
 
 		ObjectList.add(i);
 		ObjectNames.add(name);
@@ -380,7 +380,7 @@ public final class FileWriter implements ISaveAble {
 	 * @param i    the double to be added
 	 * @param name the name of the double
 	 */
-	public void add(double i, String name) {
+	void add(double i, String name) {
 
 		ObjectList.add(i);
 		ObjectNames.add(name);
@@ -391,7 +391,7 @@ public final class FileWriter implements ISaveAble {
 	 * @param i    the short to be added
 	 * @param name the name of the short
 	 */
-	public void add(short i, String name) {
+	void add(short i, String name) {
 
 		ObjectList.add(i);
 		ObjectNames.add(name);
@@ -402,7 +402,7 @@ public final class FileWriter implements ISaveAble {
 	 * @param i    the long to be added
 	 * @param name the name of the long
 	 */
-	public void add(long i, String name) {
+	void add(long i, String name) {
 
 		ObjectList.add(i);
 		ObjectNames.add(name);
@@ -413,7 +413,7 @@ public final class FileWriter implements ISaveAble {
 	 * @param i    the chat to be added
 	 * @param name the name of the char
 	 */
-	public void add(char i, String name) {
+	void add(char i, String name) {
 
 		ObjectList.add(i);
 		ObjectNames.add(name);
