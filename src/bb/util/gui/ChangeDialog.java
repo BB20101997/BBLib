@@ -97,4 +97,15 @@ public class ChangeDialog extends JDialog implements ActionListener{
 
 		}
 	}
+
+	public static JMenuItem getJMenuEntry(final JFrame j, final String Title){
+		JMenuItem jmi = new JMenuItem("Design");
+		jmi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ChangeDialog(j,Title).setVisible(true);
+			}
+		});
+		return jmi;
+	}
 }
