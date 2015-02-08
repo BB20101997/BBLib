@@ -1,7 +1,7 @@
 package bb.test.gui.FileWriterGUI;
 
+import bb.util.file.FileChooser;
 import bb.util.file.database.FileWriter;
-import bb.util.file.database.ISaveAble;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -17,23 +17,8 @@ class FileWriterGUI extends JPanel implements ListSelectionListener {
 
 	public static void main(String[] tArgs) {
 		FileWriter FW = new FileWriter();
-		File f = new File("B://Test/FileWriterTest.fw");
-
-		FW.add(true, "Boolean");
-		FW.add("Test String", "String");
-		FileWriter fw = FW.add(new ISaveAble() {
-			@Override
-			public void writeToFileWriter(FileWriter fw) {
-
-			}
-
-			@Override
-			public void loadFromFileWriter(FileWriter fw) {
-
-			}
-		}, "FileWriter");
-
-		fw.add("Test inner FileWriter", "IFW");
+		JFrame frame = new JFrame();
+		File f = FileChooser.chooseFile(frame,"Load",JFileChooser.FILES_ONLY);
 
 		if(!f.exists()) {
 			try {
@@ -45,14 +30,14 @@ class FileWriterGUI extends JPanel implements ListSelectionListener {
 		}
 
 		try {
-			FW.writeToFile(f);
 			FW.readFromFile(f);
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+
 		FileWriterGUI FWG = new FileWriterGUI();
 		FWG.setFileWriter(FW);
-		JFrame frame = new JFrame();
+
 		frame.add(FWG);
 		frame.pack();
 		frame.setVisible(true);
