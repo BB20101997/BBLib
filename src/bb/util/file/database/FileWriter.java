@@ -140,7 +140,7 @@ public final class FileWriter implements ISaveAble {
 	 *
 	 * @return if reading was successful
 	 */
-	void readFromStream(InputStream is) throws IOException {
+	public void readFromStream(InputStream is) throws IOException {
 
 		InputStreamReader ISR = new InputStreamReader(is);
 		readFromInputStreamReader(ISR);
@@ -247,7 +247,7 @@ public final class FileWriter implements ISaveAble {
 	 *
 	 * @throws IOException is thrown when the writing of one Object to Steam fails
 	 */
-	void writeToStream(OutputStream os) throws IOException {
+	public void writeToStream(OutputStream os) throws IOException {
 
 		for(int i = 0; i < ObjectList.size(); i++) {
 			writeObjectToStream(ObjectList.get(i), ObjectType.get(i), ObjectNames.get(i), os);
