@@ -6,7 +6,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
-import java.rmi.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
@@ -19,11 +18,11 @@ public class ConnectionEstablishment {
 	private SSLSocket sock = null;
 
 	/**
+	 * @param imh  just needed to print out errors to the user may be removed later
 	 * @param host the host to Connect to
 	 * @param port the port the host is listening to
-	 * @param imh  just needed to print out errors to the user may be removed later
 	 */
-	public ConnectionEstablishment(String host, int port, IConnectionManager imh) {
+	public ConnectionEstablishment(String host, int port) {
 
 		try {
 
@@ -35,19 +34,8 @@ public class ConnectionEstablishment {
 			bb.net.util.Socket.enableAnonConnection(s);
 			s.startHandshake();
 			sock = s;
-		} catch(UnknownHostException e) {
-			//Log.getInstance().logError("ConnectionEstablisher", "UnknownHostException : " + host);
-			sock = null;
-			e.printStackTrace();
-		} catch(IOException e) {
+		} catch(IOException | KeyManagementException | NoSuchAlgorithmException e) {
 			//Log.getInstance().logError("ConnectionEstablisher", "I/OException : " + host);
-			sock = null;
-			e.printStackTrace();
-		} catch(NoSuchAlgorithmException e) {
-			//Log.getInstance().logError("ConnectionEstablisher", "NpSuchAlgorithmException : " + host);
-			sock = null;
-			e.printStackTrace();
-		} catch(KeyManagementException e) {
 			sock = null;
 			e.printStackTrace();
 		}
