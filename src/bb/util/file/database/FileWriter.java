@@ -349,7 +349,7 @@ public final class FileWriter implements ISaveAble {
 	 * @param i    the byte to be added
 	 * @param name the name of the byte
 	 */
-	void add(byte i, String name) {
+	public void add(byte i, String name) {
 
 		ObjectList.add(i);
 		ObjectNames.add(name);
@@ -371,7 +371,7 @@ public final class FileWriter implements ISaveAble {
 	 * @param i    the float to be added
 	 * @param name the name of the float
 	 */
-	void add(float i, String name) {
+	public void add(float i, String name) {
 
 		ObjectList.add(i);
 		ObjectNames.add(name);
@@ -382,7 +382,7 @@ public final class FileWriter implements ISaveAble {
 	 * @param i    the double to be added
 	 * @param name the name of the double
 	 */
-	void add(double i, String name) {
+	public void add(double i, String name) {
 
 		ObjectList.add(i);
 		ObjectNames.add(name);
@@ -393,7 +393,7 @@ public final class FileWriter implements ISaveAble {
 	 * @param i    the short to be added
 	 * @param name the name of the short
 	 */
-	void add(short i, String name) {
+	public void add(short i, String name) {
 
 		ObjectList.add(i);
 		ObjectNames.add(name);
@@ -404,7 +404,7 @@ public final class FileWriter implements ISaveAble {
 	 * @param i    the long to be added
 	 * @param name the name of the long
 	 */
-	void add(long i, String name) {
+	public void add(long i, String name) {
 
 		ObjectList.add(i);
 		ObjectNames.add(name);
@@ -415,7 +415,7 @@ public final class FileWriter implements ISaveAble {
 	 * @param i    the chat to be added
 	 * @param name the name of the char
 	 */
-	void add(char i, String name) {
+	public void add(char i, String name) {
 
 		ObjectList.add(i);
 		ObjectNames.add(name);
@@ -444,7 +444,7 @@ public final class FileWriter implements ISaveAble {
 		return a;
 	}
 
-	public boolean containsObject(String s){
+	public boolean containsObject(String s) {
 		return ObjectNames.contains(s);
 	}
 
