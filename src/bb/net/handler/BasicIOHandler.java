@@ -92,7 +92,42 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 		return false;
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
+	public boolean sendPacket(APacket p) {
+
+		if(IMH.getPacketRegistrie().containsPacket(p.getClass())) {
+
+			//Log.getInstance().logDebug("BasicIOHandler", "Sending Packet : " + p.getClass());
+
+			int id = IMH.getPacketRegistrie().getID(p.getClass());
+
+			DataOut dataOut = DataOut.newInstance();
+
+			try {
+				p.writeToData(dataOut);
+			} catch(IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+
+			byte[] b = dataOut.getBytes();
+
+
+			try {
+				dos.writeInt(id);
+				dos.writeInt(b.length);
+				dos.write(b);
+			} catch(IOException e) {
+				return false;
+			}
+
+
+			return true;
+
+		}
+
+		return false;
+	}	@Override
 	public void run() {
 
 		//Log.getInstance().logDebug("BasicIOHandler", "Starting BasicIOHandler");
@@ -142,52 +177,6 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 
 	}
 
-
-	@SuppressWarnings("unchecked")
-	public boolean sendPacket(APacket p) {
-
-		if(IMH.getPacketRegistrie().containsPacket(p.getClass())) {
-
-			//Log.getInstance().logDebug("BasicIOHandler", "Sending Packet : " + p.getClass());
-
-			int id = IMH.getPacketRegistrie().getID(p.getClass());
-
-			DataOut dataOut = DataOut.newInstance();
-
-			try {
-				p.writeToData(dataOut);
-			} catch(IOException e) {
-				e.printStackTrace();
-				return false;
-			}
-
-			byte[] b = dataOut.getBytes();
-
-
-			try {
-				dos.writeInt(id);
-				dos.writeInt(b.length);
-				dos.write(b);
-			} catch(IOException e) {
-				return false;
-			}
-
-
-			return true;
-
-		}
-
-		return false;
-	}
-
-	@Override
-	public void finalize() throws Throwable {
-		if(isAlive())
-			stop();
-		super.finalize();
-
-	}
-
 	/**
 	 * @return if the end() method was called or the run method ended
 	 */
@@ -204,6 +193,16 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 	public NetworkState getNetworkState() {
 		return status;
 	}
+
+	@Override
+	public void finalize() throws Throwable {
+		if(isAlive())
+			stop();
+		super.finalize();
+
+	}
+
+
 
 
 }
