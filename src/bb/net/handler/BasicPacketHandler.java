@@ -26,8 +26,6 @@ public abstract class BasicPacketHandler implements IPacketHandler {
 	@SuppressWarnings("unchecked")
 	public final void HandlePacket(APacket aPacket, IIOHandler sender) {
 
-		int id = packetRegistrie.getID(aPacket.getClass());
-
 		//Log.getInstance.logInfo("BasicPacketHandler", aPacket.getClass() + ", ID : " + id);
 
 		Method m = null;
@@ -35,12 +33,17 @@ public abstract class BasicPacketHandler implements IPacketHandler {
 			m = getClass().getDeclaredMethod("handlePacket", aPacket.getClass(), IIOHandler.class);
 			m.invoke(this, aPacket, sender);
 		} catch(NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-			if(m!=null) {
+			if(m != null) {
 				System.err.println(m.getName());
 			}
 			e.printStackTrace();
 		}
 
+	}
+
+	@SuppressWarnings("unchecked")
+	public Class<APacket>[] getAssociatedPackets() {
+		return CList.toArray(new Class[CList.size()]);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -53,11 +56,6 @@ public abstract class BasicPacketHandler implements IPacketHandler {
 				}
 			}
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public Class<APacket>[] getAssociatedPackets() {
-		return CList.toArray(new Class[CList.size()]);
 	}
 
 }
