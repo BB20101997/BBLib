@@ -6,12 +6,14 @@ class TestObject
 	public TestObject()
 	{
 
+		//noinspection UseOfSystemOutOrSystemErr
 		System.out.println("Successful");
 	}
 
 	public TestObject(String text)
 	{
 
+		//noinspection UseOfSystemOutOrSystemErr
 		System.out.println(text);
 	}
 
@@ -19,11 +21,13 @@ class TestObject
 
 	{
 
+		//noinspection UseOfSystemOutOrSystemErr
 		System.out.println(i);
 	}
 
 	public TestObject(TestObject to)
 	{
+		//noinspection UseOfSystemOutOrSystemErr
 		System.out.print(to);
 	}
 }

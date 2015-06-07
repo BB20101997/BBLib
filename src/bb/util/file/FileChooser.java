@@ -15,7 +15,7 @@ public class FileChooser {
 	 * @param frame the parent JFrame
 	 * @param Button the Text of the Approval Button
 	 * @param mode the FileSelectionMode
-	 * @return the chosen File
+	 * @return the chosen File null if no file was chosen
 	 */
 	public static File chooseFile(JFrame frame, String Button,int mode){
 		

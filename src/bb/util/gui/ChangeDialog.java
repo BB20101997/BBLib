@@ -29,6 +29,7 @@ public class ChangeDialog extends JDialog implements ActionListener{
 					} catch(ClassNotFoundException | InstantiationException
 							| IllegalAccessException | UnsupportedLookAndFeelException e) {
 
+						//noinspection UseOfSystemOutOrSystemErr
 						System.err.println(e);
 					}
 					SwingUtilities.updateComponentTreeUI(j);

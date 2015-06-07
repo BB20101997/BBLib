@@ -212,6 +212,7 @@ public final class FileWriter implements ISaveAble {
 								try {
 									type = Types.values()[Integer.valueOf(s)];
 								} catch(NumberFormatException e) {
+									//noinspection UseOfSystemOutOrSystemErr
 									System.out.println(name);
 									throw e;
 								}
@@ -268,6 +269,7 @@ public final class FileWriter implements ISaveAble {
 	 *
 	 * @return if the operation was successful
 	 */
+	@SuppressWarnings("StringConcatenationMissingWhitespace")
 	private void writeObjectToStream(Object obj, Types t, String name, OutputStream os) throws IOException {
 
 		//Writing the Name
@@ -440,6 +442,10 @@ public final class FileWriter implements ISaveAble {
 		List<String> a = new ArrayList<>();
 		a.addAll(ObjectNames);
 		return a;
+	}
+
+	public boolean containsObject(String s){
+		return ObjectNames.contains(s);
 	}
 
 	@Override

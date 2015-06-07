@@ -18,7 +18,10 @@ class FileWriterGUI extends JPanel implements ListSelectionListener {
 	public static void main(String[] tArgs) {
 		FileWriter FW = new FileWriter();
 		JFrame frame = new JFrame();
-		File f = FileChooser.chooseFile(frame,"Load",JFileChooser.FILES_ONLY);
+		File f = FileChooser.chooseFile(frame, "Load", JFileChooser.FILES_ONLY);
+
+		if(f == null)
+			return;
 
 		if(!f.exists()) {
 			try {

@@ -46,12 +46,14 @@ class ObjCreateDialog extends JDialog implements ActionListener
 
 		super(j, "New Object", true);
 		state = 1;
+		//noinspection UseOfSystemOutOrSystemErr
 		System.out.println("String : " + name);
 		try {
 			clazz = Class.forName(name);
 		} catch(ClassNotFoundException e2) {
 			e2.printStackTrace();
 		}
+		//noinspection UseOfSystemOutOrSystemErr
 		System.out.println("Class : " + clazz);
 		Constructor[] constructs = clazz.getConstructors();
 		constructors.setListData(constructs);
@@ -131,10 +133,12 @@ class ObjCreateDialog extends JDialog implements ActionListener
 
 				case 0 : {
 					String ct = clazzString.getText();
+					//noinspection UseOfSystemOutOrSystemErr
 					System.out.println("String : " + ct);
 					try
 					{
 						clazz = Class.forName(ct);
+						//noinspection UseOfSystemOutOrSystemErr
 						System.out.println("Class : " + clazz);
 						Constructor[] cA = clazz.getConstructors();
 						constructors.setListData(cA);
@@ -245,6 +249,7 @@ class ObjCreateDialog extends JDialog implements ActionListener
 					try
 					{
 						retObject = constructors.getSelectedValue().newInstance(objA);
+						//noinspection UseOfSystemOutOrSystemErr
 						System.out.println("Created Object of type : " + objA.getClass());
 						setVisible(false);
 					}
