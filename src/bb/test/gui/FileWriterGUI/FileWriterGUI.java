@@ -112,19 +112,19 @@ class FileWriterGUI extends JPanel implements ListSelectionListener {
 		if(i > -1) {
 			String name = FW.getObjectNames().get(i);
 			FileWriter.Types type = FW.getObjectType(name);
-			switch(type) {
-				case ISAVEABLE: {
-					displayValue = new FileWriterGUI((FileWriter) FW.get(name));
-					displayValue.setBorder(BorderFactory.createLoweredBevelBorder());
-					break;
-				}
 
-				default: {
-					displayValue = new JPanel();
-					displayValue.setBorder(BorderFactory.createLoweredBevelBorder());
-					JTextField tf = new JTextField(String.valueOf(FW.get(name)));
-					displayValue.add(tf);
-				}
+			if(type != null && type == FileWriter.Types.ISAVEABLE) {
+
+				displayValue = new FileWriterGUI((FileWriter) FW.get(name));
+				displayValue.setBorder(BorderFactory.createLoweredBevelBorder());
+
+			} else {
+
+				displayValue = new JPanel();
+				displayValue.setBorder(BorderFactory.createLoweredBevelBorder());
+				JTextField tf = new JTextField(String.valueOf(FW.get(name)));
+				displayValue.add(tf);
+
 			}
 			mainBox.removeAll();
 			mainBox.add(jList);
