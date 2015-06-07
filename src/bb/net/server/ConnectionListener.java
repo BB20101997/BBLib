@@ -21,10 +21,10 @@ import java.util.List;
 
 /**
  * Created by BB20101997 on 30.04.2015.
- */public class ConnectionListener extends Thread {
+ */
+public class ConnectionListener extends Thread {
 
 	private final int port;
-	private int          logins           = 0;
 	private boolean      continueLoop     = true;
 	final   List<Socket> clientSocketList = new ArrayList<>();
 	final IConnectionManager MH;
@@ -99,21 +99,14 @@ import java.util.List;
 						s.close();
 						break;
 					}
-					logins++;
-					String n = String.valueOf(logins);
+
 					BasicIOHandler c = new BasicIOHandler(s.getInputStream(), s.getOutputStream(), MH, false);
-					//c.setActorName(n);
-					//c.sendPacket(new RenamePacket("Client", n));
 
 					clientSocketList.add(s);
 					MH.getConnections().add(c);
 					Thread t = new Thread(c);
 					t.start();
 
-					//TODO move to after handshake/login sendPackage(new ChatPacket(n + " joined the Server", getActor().getActorName()), ALL);
-					//println("[" + MH.getActor().getActorName() + "] " + n + " joined the Server");
-					//println("Client connected not yet logged in! Assigned #" + n);
-					//Log.getInstance().logDebug("ServerConnectionHandler", "Connection to Client established!");
 					updateUserCount();
 				}
 				MH.setServerStatus(ServerStatus.SHUTDOWN);
@@ -125,8 +118,8 @@ import java.util.List;
 						e.printStackTrace();
 					}
 				}
+				MH.getConnections().clear();
 			}
-			MH.getConnections().clear();
 
 		} catch(KeyManagementException | NoSuchAlgorithmException | IOException e) {
 			e.printStackTrace();
@@ -141,7 +134,7 @@ import java.util.List;
 				i++;
 			}
 		}
-		MH.setServerStatus(i > 0 ? i == MH.getMaxConnections()? ServerStatus.FULL : i>MH.getMaxConnections()?ServerStatus.OVERFILLED:ServerStatus.READY : ServerStatus.EMPTY);
+		MH.setServerStatus(i > 0 ? i == MH.getMaxConnections() ? ServerStatus.FULL : i > MH.getMaxConnections() ? ServerStatus.OVERFILLED : ServerStatus.READY : ServerStatus.EMPTY);
 	}
 
 	@Override
