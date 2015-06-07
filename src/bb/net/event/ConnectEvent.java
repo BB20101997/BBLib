@@ -9,14 +9,20 @@ import bb.net.interfaces.IIOHandler;
 public class ConnectEvent implements IConnectionEvent {
 
 	private IIOHandler iio;
+	private boolean    bool;
 
-	public ConnectEvent(IIOHandler io){
+	public ConnectEvent(IIOHandler io, boolean userClinet) {
 		iio = io;
+		bool = userClinet;
 	}
 
 	@Override
 	public IIOHandler getIIOHandler() {
 		return iio;
+	}
+
+	public boolean isUserClient() {
+		return bool;
 	}
 
 }
