@@ -3,12 +3,15 @@ package bb.util.gui;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ChangeDialog extends JDialog implements ActionListener{
+public class ChangeDialog extends JDialog implements ActionListener {
 
 	@SuppressWarnings("rawtypes")
 	private final JComboBox combo1;
@@ -42,55 +45,57 @@ public class ChangeDialog extends JDialog implements ActionListener{
 
 			default: {
 				setVisible(false);
+			}
 		}
-		}
-				
+
 	}
-	
-	
-	@ SuppressWarnings("rawtypes")
-	public ChangeDialog(JFrame J,String Title){
+
+
+	@SuppressWarnings("rawtypes")
+	public ChangeDialog(JFrame J, String Title) {
 		super(J, Title, true);
 		j = J;
 		setResizable(false);
-		
+
 		combo1 = new JComboBox();
 		JButton ok = new JButton("Ok");
 		JButton abbrechen = new JButton("Abbrechen");
-		
+
 		getLookAndFeels();
-		
+
 		setLayout(new BorderLayout());
-		
+
 		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
 		addWindowListener(new MainWindowListener());
-		
-		add("North",combo1);
+
+		add("North", combo1);
 		add("West", ok);
 		add("East", abbrechen);
-		
+
 		ok.addActionListener(this);
 		abbrechen.addActionListener(this);
-		
+
 		pack();
-		
+
 	}
-	
-	@ SuppressWarnings("unchecked")
-	void getLookAndFeels(){
+
+	@SuppressWarnings("unchecked")
+	void getLookAndFeels() {
 		UIManager.LookAndFeelInfo a[] = UIManager.getInstalledLookAndFeels();
-		for(int i = 0;i<a.length;i++){
-				list1.add(a[i].getName());
+		for(int i = 0; i < a.length; i++) {
+			list1.add(a[i].getName());
 			lookAndFeel.add(a[i]);
 			combo1.addItem(list1.get(i));
 		}
 	}
-	public LookAndFeelInfo getLookAndFeel(){
-		
+
+	public LookAndFeelInfo getLookAndFeel() {
+
 		return LAF;
-	
+
 	}
+
 	private class MainWindowListener extends WindowAdapter {
 
 		public void windowClosing(WindowEvent e) {
@@ -99,12 +104,12 @@ public class ChangeDialog extends JDialog implements ActionListener{
 		}
 	}
 
-	public static JMenuItem getJMenuEntry(final JFrame j, final String Title){
+	public static JMenuItem getJMenuEntry(final JFrame j, final String Title) {
 		JMenuItem jmi = new JMenuItem("Design");
 		jmi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new ChangeDialog(j,Title).setVisible(true);
+				new ChangeDialog(j, Title).setVisible(true);
 			}
 		});
 		return jmi;

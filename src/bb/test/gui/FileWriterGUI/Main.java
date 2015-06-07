@@ -3,11 +3,9 @@ package bb.test.gui.FileWriterGUI;
 import bb.test.gui.TestGUI;
 
 @SuppressWarnings("javadoc")
-class Main
-{
+class Main {
 
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		new TestGUI();
 	}
 

@@ -25,61 +25,10 @@ public class BasicConnectionManager implements IConnectionManager {
 
 	protected IPacketRegistrie   packetRegistrie;
 	protected IPacketDistributor packetDistributor;
-	protected List<AIConnectionEventHandler> iichehList = new ArrayList<>();
+	protected List<AIConnectionEventHandler> aichehList = new ArrayList<>();
 
 	protected List<IConnectionEventHandler> IConnectionEventHandlerList = new ArrayList<>();
-
-	protected IIOHandler ALL   = new IIOHandler() {
-		@Override
-		public void start() {
-
-		}
-
-		@Override
-		public void stop() {
-		}
-
-		@Override
-		public boolean isDummy() {
-			return true;
-		}
-
-		@Override
-		public boolean sendPacket(APacket p) {
-			if(side == Side.SERVER) {
-				List<Thread> t = new ArrayList<>();
-				Thread th;
-				for(IIOHandler iio : connections) {
-					th = new Thread(new ALLRunnable(iio, p));
-					t.add(th);
-					th.start();
-				}
-				return true;
-			} else {
-				return SERVER().sendPacket(p);
-			}
-		}
-
-		@Override
-		public boolean isAlive() {
-			return true;
-		}
-
-		@Override
-		public void receivedHandshake() {
-		}
-
-		@Override
-		public NetworkState getNetworkState() {
-			return side == Side.SERVER ? NetworkState.USER_CLIENT : NetworkState.MANAGEMENT;
-		}
-
-		@Override
-		public void run() {
-
-		}
-	};
-	protected IIOHandler LOCAL = new IIOHandler() {
+	protected IIOHandler                    LOCAL                       = new IIOHandler() {
 		@Override
 		public void start() {
 
@@ -130,9 +79,57 @@ public class BasicConnectionManager implements IConnectionManager {
 		}
 	};
 	protected IIOHandler SERVER;
+	protected Side       side;
+	protected IIOHandler ALL = new IIOHandler() {
+		@Override
+		public void start() {
 
-	protected Side side;
+		}
 
+		@Override
+		public void run() {
+
+		}
+
+		@Override
+		public void stop() {
+		}
+
+		@Override
+		public boolean isDummy() {
+			return true;
+		}
+
+		@Override
+		public boolean sendPacket(APacket p) {
+			if(side == Side.SERVER) {
+				Thread th;
+				for(IIOHandler iio : connections) {
+					th = new Thread(()->{iio.sendPacket(p);});
+					th.start();
+				}
+				return true;
+			} else {
+				return SERVER().sendPacket(p);
+			}
+		}
+
+		@Override
+		public boolean isAlive() {
+			return true;
+		}
+
+		@Override
+		public void receivedHandshake() {
+		}
+
+		@Override
+		public NetworkState getNetworkState() {
+			return side == Side.SERVER ? NetworkState.USER_CLIENT : NetworkState.MANAGEMENT;
+		}
+
+
+	};
 	protected SSLSocket socket;
 
 	protected ConnectionListener conLis;
@@ -157,14 +154,58 @@ public class BasicConnectionManager implements IConnectionManager {
 		}
 	}
 
+	public void shutdown() {
+		if(conLis != null) {
+			conLis.end();
+		}
+		disconnect(ALL());
+		serverStatus = ServerStatus.SHUTDOWN;
+	}
+
+	public IIOHandler LOCAL() {
+		return LOCAL;
+	}
+
+	public IIOHandler SERVER() {
+		return side == Side.SERVER ? LOCAL : SERVER;
+	}
+
+	@Override
+	public IIOHandler ALL() {
+		return ALL;
+	}
+
+	@Override
+	public IPacketRegistrie getPacketRegistrie() {
+		return packetRegistrie;
+	}
+
+	@Override
+	public IPacketDistributor getPacketDistributor() {
+		return packetDistributor;
+	}
+
 	@Override
 	public void addConnectionEventHandler(IConnectionEventHandler iceh) {
 		IConnectionEventHandlerList.add(iceh);
 	}
 
-	protected void handleIConnectionEvent(IConnectionEvent event) {
-		for(IConnectionEventHandler iche : IConnectionEventHandlerList){
-			iche.HandleEvent(event);
+	public void handleIConnectionEvent(IConnectionEvent event) {
+		for(IConnectionEventHandler iceh : IConnectionEventHandlerList) {
+			iceh.HandleEvent(event);
+		}
+	}
+
+	@Override
+	public void sendPackage(APacket p, IIOHandler target) {
+		if(side == Side.CLIENT) {
+			if(SERVER != null) {
+				SERVER.sendPacket(p);
+			} else {
+				//Log.getInstance().logWarning("ClientConnectionHandler", "Couldn't send Packet to Server!");
+			}
+		} else {
+			target.sendPacket(p);
 		}
 	}
 
@@ -204,82 +245,9 @@ public class BasicConnectionManager implements IConnectionManager {
 
 	}
 
-	public void shutdown() {
-		if(conLis!=null){
-			conLis.end();
-		}
-		disconnect(ALL());
-		serverStatus = ServerStatus.SHUTDOWN;
-	}
-
-	@Override
-	public IIOHandler ALL() {
-		return ALL;
-	}
-
-	public IIOHandler LOCAL() {
-		return LOCAL;
-	}
-
-	public IIOHandler SERVER() {
-		return side == Side.SERVER ? LOCAL : SERVER;
-	}
-
 	@Override
 	public final Side getSide() {
 		return side;
-	}
-
-	@Override
-	public int getMaxConnections() {
-		return maxConnections;
-	}
-
-	public void setMaxConnections(int maxC) {
-		maxConnections = maxC;
-	}
-
-	@Override
-	public List<IIOHandler> getConnections() {
-		return connections;
-	}
-
-	@Override
-	public IPacketRegistrie getPacketRegistrie() {
-		return packetRegistrie;
-	}
-
-	@Override
-	public IPacketDistributor getPacketDistributor() {
-		return packetDistributor;
-	}
-
-	@Override
-	public ServerStatus getServerStatus() {
-		return serverStatus;
-	}
-
-	@Override
-	public void setServerStatus(ServerStatus serverStat) {
-		serverStatus = serverStat;
-	}
-
-	private class ALLRunnable implements Runnable {
-
-		IIOHandler iioHandler;
-		APacket    aPacket;
-
-		public ALLRunnable(IIOHandler iio, APacket p) {
-			iioHandler = iio;
-			aPacket = p;
-		}
-
-		@Override
-		public void run() {
-			if(iioHandler != null) {
-				iioHandler.sendPacket(aPacket);
-			}
-		}
 	}
 
 	@Override
@@ -296,7 +264,7 @@ public class BasicConnectionManager implements IConnectionManager {
 				SERVER = null;
 			}
 
-			socket = new ConnectionEstablishment(host, port, this).getSocket();
+			socket = new ConnectionEstablishment(host, port).getSocket();
 
 			if(socket != null) {
 				try {
@@ -316,16 +284,27 @@ public class BasicConnectionManager implements IConnectionManager {
 	}
 
 	@Override
-	public void sendPackage(APacket p, IIOHandler target) {
-		if(side == Side.CLIENT) {
-			if(SERVER != null) {
-				SERVER.sendPacket(p);
-			} else {
-				//Log.getInstance().logWarning("ClientConnectionHandler", "Couldn't send Packet to Server!");
-			}
-		}else{
-			target.sendPacket(p);
-		}
+	public int getMaxConnections() {
+		return maxConnections;
+	}
+
+	public void setMaxConnections(int maxC) {
+		maxConnections = maxC;
+	}
+
+	@Override
+	public List<IIOHandler> getConnections() {
+		return connections;
+	}
+
+	@Override
+	public ServerStatus getServerStatus() {
+		return serverStatus;
+	}
+
+	@Override
+	public void setServerStatus(ServerStatus serverStat) {
+		serverStatus = serverStat;
 	}
 
 }

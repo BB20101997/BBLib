@@ -6,7 +6,7 @@ import bb.net.packets.connecting.PacketSyncPacket;
 /**
  * Created by BB20101997 on 03.09.2014.
  */
-public interface IPacketRegistrie{
+public interface IPacketRegistrie {
 
 	int registerPacket(Class<? extends APacket> p);
 

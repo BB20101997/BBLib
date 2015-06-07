@@ -10,13 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({"serial", "javadoc"})
-public class TestGUI extends JFrame implements ActionListener
-{
+public class TestGUI extends JFrame implements ActionListener {
 
 	public List<Object> objList = new ArrayList<>();
 	public List<String> strList = new ArrayList<>();
 
-	public        JButton butEnter  = new JButton(ButtonNames.ENTER);
+	public JButton butEnter = new JButton(ButtonNames.ENTER);
 
 	public TestGUI() {
 
@@ -41,11 +40,10 @@ public class TestGUI extends JFrame implements ActionListener
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0)
-	{
+	public void actionPerformed(ActionEvent arg0) {
 
-		switch(arg0.getActionCommand()){
-			case ButtonNames.NEWOBJBUTTON : {
+		switch(arg0.getActionCommand()) {
+			case ButtonNames.NEWOBJBUTTON: {
 				new ObjCreateDialog(this).setVisible(true);
 			}
 		}

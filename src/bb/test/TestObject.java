@@ -1,17 +1,14 @@
 package bb.test;
 
-class TestObject
-{
+class TestObject {
 
-	public TestObject()
-	{
+	public TestObject() {
 
 		//noinspection UseOfSystemOutOrSystemErr
 		System.out.println("Successful");
 	}
 
-	public TestObject(String text)
-	{
+	public TestObject(String text) {
 
 		//noinspection UseOfSystemOutOrSystemErr
 		System.out.println(text);
@@ -25,8 +22,7 @@ class TestObject
 		System.out.println(i);
 	}
 
-	public TestObject(TestObject to)
-	{
+	public TestObject(TestObject to) {
 		//noinspection UseOfSystemOutOrSystemErr
 		System.out.print(to);
 	}

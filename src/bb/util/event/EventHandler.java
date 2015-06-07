@@ -23,7 +23,7 @@ public abstract class EventHandler<E extends IEvent> {
 	}
 
 	public void HandleEvent(E iicev) {
-		HandleEvent(this,funcName,iicev);
+		HandleEvent(this, funcName, iicev);
 	}
 
 	public static <V extends IEvent> void HandleEvent(Object instance, String funcName, V iicev) {

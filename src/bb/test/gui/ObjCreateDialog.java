@@ -13,8 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings({"serial", "rawtypes", "javadoc"})
-class ObjCreateDialog extends JDialog implements ActionListener
-{
+class ObjCreateDialog extends JDialog implements ActionListener {
 
 	private Class clazz;
 	@SuppressWarnings("unused")
@@ -63,21 +62,20 @@ class ObjCreateDialog extends JDialog implements ActionListener
 
 	}
 
-	private void guiSetupByState()
-	{
+	private void guiSetupByState() {
 
 		b.removeAll();
 
-		switch(state){
-			case 0 : {
+		switch(state) {
+			case 0: {
 				b.add(clazzString);
 				b.add(enterButton);
 			}
-			case 1 : {
+			case 1: {
 				b.add(constructors);
 				b.add(enterButton);
 			}
-			case 2 : {
+			case 2: {
 				b.add(paraScroll);
 				b.add(enterButton);
 			}
@@ -86,8 +84,7 @@ class ObjCreateDialog extends JDialog implements ActionListener
 		pack();
 	}
 
-	private Class getWrapperClassFromPrimitive(Class t)
-	{
+	private Class getWrapperClassFromPrimitive(Class t) {
 
 		if(t == int.class) { return Integer.class; }
 		if(t == short.class) { return Short.class; }
@@ -102,15 +99,12 @@ class ObjCreateDialog extends JDialog implements ActionListener
 
 	@SuppressWarnings({"unchecked"})
 	@Override
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 
 		if((state == 2)
-				&& (e.getActionCommand().equals(ButtonNames.NEWOBJBUTTON) || e.getActionCommand().equals(ButtonNames.CHANGEOBJ)))
-		{
+				&& (e.getActionCommand().equals(ButtonNames.NEWOBJBUTTON) || e.getActionCommand().equals(ButtonNames.CHANGEOBJ))) {
 			JComponent j = (JComponent) e.getSource();
-			if(j instanceof JButton)
-			{
+			if(j instanceof JButton) {
 				JButton jb = (JButton) j;
 				List<JComponent> jL = new ArrayList<>();
 				Collections.addAll(jL, jcA);
@@ -126,26 +120,22 @@ class ObjCreateDialog extends JDialog implements ActionListener
 
 		}
 
-		if(e.getActionCommand().equals(ButtonNames.ENTER))
-		{
+		if(e.getActionCommand().equals(ButtonNames.ENTER)) {
 
-			switch(state){
+			switch(state) {
 
-				case 0 : {
+				case 0: {
 					String ct = clazzString.getText();
 					//noinspection UseOfSystemOutOrSystemErr
 					System.out.println("String : " + ct);
-					try
-					{
+					try {
 						clazz = Class.forName(ct);
 						//noinspection UseOfSystemOutOrSystemErr
 						System.out.println("Class : " + clazz);
 						Constructor[] cA = clazz.getConstructors();
 						constructors.setListData(cA);
 						state = 1;
-					}
-					catch(ClassNotFoundException e2)
-					{
+					} catch(ClassNotFoundException e2) {
 						java.awt.Toolkit.getDefaultToolkit().beep();
 						e2.printStackTrace();
 					}
@@ -153,16 +143,12 @@ class ObjCreateDialog extends JDialog implements ActionListener
 					guiSetupByState();
 					break;
 				}
-				case 1 : {
+				case 1: {
 					cA = constructors.getSelectedValue().getParameterTypes();
-					if(cA.length == 0)
-					{
-						try
-						{
+					if(cA.length == 0) {
+						try {
 							retObject = clazz.newInstance();
-						}
-						catch(InstantiationException | IllegalAccessException e1)
-						{
+						} catch(InstantiationException | IllegalAccessException e1) {
 							e1.printStackTrace();
 						}
 
@@ -172,15 +158,11 @@ class ObjCreateDialog extends JDialog implements ActionListener
 					}
 					jcA = new JComponent[cA.length];
 					objA = new Object[cA.length];
-					for(int i = 0; i < cA.length; i++)
-					{
-						if(cA[i].isPrimitive() || (cA[i] == String.class))
-						{
+					for(int i = 0; i < cA.length; i++) {
+						if(cA[i].isPrimitive() || (cA[i] == String.class)) {
 							JTextField j = new JTextField("Enter a " + cA[i].getName());
 							jcA[i] = j;
-						}
-						else
-						{
+						} else {
 							JButton j = new JButton(ButtonNames.NEWOBJBUTTON);
 							j.addActionListener(this);
 							jcA[i] = j;
@@ -191,71 +173,54 @@ class ObjCreateDialog extends JDialog implements ActionListener
 					guiSetupByState();
 					break;
 				}
-				case 2 : {
+				case 2: {
 
-					for(int i = 0; i < jcA.length; i++)
-					{
-						if(jcA[i] instanceof JTextField)
-						{
+					for(int i = 0; i < jcA.length; i++) {
+						if(jcA[i] instanceof JTextField) {
 							JTextField jT = (JTextField) jcA[i];
 							Object s = jT.getText();
-							if(cA[i].isPrimitive())
-							{
+							if(cA[i].isPrimitive()) {
 								Method m;
-								try
-								{
-									if(cA[i] != char.class)
-									{
+								try {
+									if(cA[i] != char.class) {
 										m = getWrapperClassFromPrimitive(cA[i]).getMethod("valueOf", String.class);
-									}
-									else
-									{
+									} else {
 										s = ((String) s).toCharArray()[0];
 										objA[i] = s;
 										continue;
 
 									}
-								}
-								catch(NoSuchMethodException | SecurityException e1)
-								{
+								} catch(NoSuchMethodException | SecurityException e1) {
 									state = -1;
 									e1.printStackTrace();
 									return;
 
 								}
 
-								try
-								{
+								try {
 									s = m.invoke(m, s);
-								}
-								catch(IllegalAccessException | IllegalArgumentException
-										| InvocationTargetException e1)
-								{
+								} catch(IllegalAccessException | IllegalArgumentException
+										| InvocationTargetException e1) {
 									e1.printStackTrace();
 									java.awt.Toolkit.getDefaultToolkit().beep();
 									return;
 								}
 
 								objA[i] = s;
-							}
-							else
-							{
+							} else {
 								objA[i] = s;
 							}
 
 						}
 					}
 
-					try
-					{
+					try {
 						retObject = constructors.getSelectedValue().newInstance(objA);
 						//noinspection UseOfSystemOutOrSystemErr
 						System.out.println("Created Object of type : " + objA.getClass());
 						setVisible(false);
-					}
-					catch(InstantiationException | IllegalAccessException
-							| IllegalArgumentException | InvocationTargetException e1)
-					{
+					} catch(InstantiationException | IllegalAccessException
+							| IllegalArgumentException | InvocationTargetException e1) {
 						e1.printStackTrace();
 					}
 				}
@@ -263,8 +228,7 @@ class ObjCreateDialog extends JDialog implements ActionListener
 		}
 	}
 
-	Object getReturn()
-	{
+	Object getReturn() {
 
 		return retObject;
 	}

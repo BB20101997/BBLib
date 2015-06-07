@@ -5,6 +5,6 @@ package bb.net.interfaces;
  */
 public interface IConnectionEventHandler {
 
-	public void HandleEvent(IConnectionEvent iicev);
+	void HandleEvent(IConnectionEvent iicev);
 
 }

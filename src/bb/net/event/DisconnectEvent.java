@@ -7,13 +7,13 @@ import bb.net.interfaces.IIOHandler;
 /**
  * Created by BB20101997 on 12.04.2015.
  */
-public class DisconnectEvent implements IConnectionEvent{
+public class DisconnectEvent implements IConnectionEvent {
 
 	private IIOHandler iio;
 	//the side that disconnected
-	private Side side;
+	private Side       side;
 
-	public DisconnectEvent(IIOHandler io,Side side){
+	public DisconnectEvent(IIOHandler io, Side side) {
 		iio = io;
 		this.side = side;
 	}
@@ -23,7 +23,7 @@ public class DisconnectEvent implements IConnectionEvent{
 		return iio;
 	}
 
-	public Side getSide(){
+	public Side getSide() {
 		return side;
 	}
 }

@@ -9,7 +9,7 @@ import bb.util.event.EventHandler;
  */
 public abstract class AIConnectionEventHandler extends EventHandler<IConnectionEvent> implements IConnectionEventHandler {
 
-	public AIConnectionEventHandler(){
+	public AIConnectionEventHandler() {
 		super();
 	}
 
