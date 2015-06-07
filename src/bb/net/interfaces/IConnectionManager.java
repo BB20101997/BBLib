@@ -24,13 +24,16 @@ public interface IConnectionManager {
 
 	/**
 	 * Should be a constant dummy to perform an action on all connections
-	 * */
+	 */
 	IIOHandler ALL();
 
 	IPacketRegistrie getPacketRegistrie();
+
 	IPacketDistributor getPacketDistributor();
 
 	void addConnectionEventHandler(IConnectionEventHandler iceh);
+
+	void handleIConnectionEvent(IConnectionEvent event);
 
 	void sendPackage(APacket p, IIOHandler target);
 
