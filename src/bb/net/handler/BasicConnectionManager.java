@@ -148,7 +148,8 @@ public class BasicConnectionManager implements IConnectionManager {
 		this();
 		side = s;
 		if(side == Side.SERVER) {
-			LOCAL = SERVER;
+			//whoops was supposed to be vice-versa
+			SERVER = LOCAL;
 			conLis = new ConnectionListener(port, this);
 			new Thread(conLis).start();
 		}
@@ -199,13 +200,22 @@ public class BasicConnectionManager implements IConnectionManager {
 	@Override
 	public void sendPackage(APacket p, IIOHandler target) {
 		if(side == Side.CLIENT) {
+			if(target==LOCAL()){
+				target.sendPacket(p);
+				return;
+			}
 			if(SERVER != null) {
 				SERVER.sendPacket(p);
 			} else {
 				//Log.getInstance().logWarning("ClientConnectionHandler", "Couldn't send Packet to Server!");
 			}
 		} else {
+			if(target!=null){
 			target.sendPacket(p);
+		}else{
+				System.err.println("Null target!");
+				throw new RuntimeException("Null target critical failure!");
+			}
 		}
 	}
 
