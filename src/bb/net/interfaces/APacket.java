@@ -13,16 +13,18 @@ public abstract class APacket {
 
 
 	public APacket copy() {
+		APacket p = null;
 		try {
-			APacket p = this.getClass().newInstance();
+			p = this.getClass().newInstance();
 			DataOut dataOut = DataOut.newInstance();
 			writeToData(dataOut);
-			p.readFromData(DataIn.newInstance(dataOut.getBytes()));
-			return p;
+			byte[] b = dataOut.getBytes();
+			p.readFromData(DataIn.newInstance(b));
 		} catch(InstantiationException | IllegalAccessException | IOException e) {
+			p = null;
 			e.printStackTrace();
 		}
-		return null;
+		return p;
 	}
 
 	@SuppressWarnings("CanBeFinal")
