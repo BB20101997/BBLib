@@ -15,6 +15,8 @@ import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BasicConnectionManager implements IConnectionManager {
 
@@ -168,7 +170,7 @@ public class BasicConnectionManager implements IConnectionManager {
 	}
 
 	public IIOHandler SERVER() {
-		return side == Side.SERVER ? LOCAL : SERVER;
+		return SERVER;
 	}
 
 	@Override
@@ -199,15 +201,11 @@ public class BasicConnectionManager implements IConnectionManager {
 
 	@Override
 	public void sendPackage(APacket p, IIOHandler target) {
-		if(side == Side.CLIENT) {
-			if(target==LOCAL()){
-				target.sendPacket(p);
-				return;
-			}
+		if(side == Side.CLIENT&&target!=LOCAL()) {
 			if(SERVER != null) {
 				SERVER.sendPacket(p);
 			} else {
-				//Log.getInstance().logWarning("ClientConnectionHandler", "Couldn't send Packet to Server!");
+				Logger.getLogger("bb.net.handler.BasicConnectionManager").log(Level.FINE,"SERVER is equivalent to null when sending Package!");
 			}
 		} else {
 			if(target!=null){
@@ -238,17 +236,14 @@ public class BasicConnectionManager implements IConnectionManager {
 				e.printStackTrace();
 			}
 
-
 		} else {
 			if(a != ALL() && a != SERVER()) {
 				a.stop();
 				connections.remove(a);
 			} else {
 				synchronized(connections) {
-					for(IIOHandler iioHandler : connections) {
-						iioHandler.stop();
-						connections.remove(iioHandler);
-					}
+					connections.forEach(bb.net.interfaces.IIOHandler::stop);
+					connections.clear();
 				}
 			}
 		}
