@@ -38,6 +38,7 @@ public class PacketDistributor implements IPacketDistributor {
 		//Log.getInstance().logDebug("PacketDistributor", "Distributing Packet\nID:" + id + "\nClass:" + p.getClass());
 
 		try {
+			System.err.println("Incoming Package with "+data.length+" bytes!"+System.lineSeparator()+"Package is of class:"+p.getClass());
 			p.readFromData(DataIn.newInstance(data.clone()));
 		} catch(IOException e) {
 			e.printStackTrace();
