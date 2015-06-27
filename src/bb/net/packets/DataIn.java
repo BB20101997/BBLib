@@ -13,7 +13,9 @@ import java.util.LinkedList;
 public class DataIn extends DataInputStream implements IData {
 
 	public static DataIn newInstance(byte[] b) {
-		return new DataIn(new InStream(b));
+		InStream inStream = new InStream();
+		inStream.setBytes(b);
+		return new DataIn(inStream);
 	}
 
 
@@ -23,7 +25,11 @@ public class DataIn extends DataInputStream implements IData {
 
 	private static class InStream extends InputStream {
 
-		public InStream(byte[] b) {
+		public InStream() {
+		}
+
+		public void setBytes(byte[] b){
+			if(bList.isEmpty())
 			for(byte by : b) {
 				bList.add(by);
 			}
@@ -36,7 +42,8 @@ public class DataIn extends DataInputStream implements IData {
 			if(bList.isEmpty()) {
 				return -1;
 			} else {
-				return bList.pollFirst();
+				//Damn the signed bytes
+				return bList.pollFirst()&255;
 			}
 		}
 	}
