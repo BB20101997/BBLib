@@ -16,22 +16,7 @@ public final class FileWriter implements ISaveAble {
 	@SuppressWarnings("FieldCanBeLocal")
 	private final float VERSION = 0.02f;
 
-	// kann bis mindestens F8FF fortgeführt werden
-
-	private static final char splitCharacter = '\uF8F0';
-	private static final char typeSeparator  = '\uF8F5';
-
-	private static final char innerFileWriterBeginn = '\uF8F7';
-	private static final char innerFileWriterEnd    = '\uF8F8';
-
-	private static final char beginOfString = '\uF8F1';
-	private static final char endOfString   = '\uF8F2';
-
-	private static final char endOfFileWriter = '\uF8F4';
-
 	private static final String VersionName = "$VERSION$";
-
-	private static final String LENGTH = "length";
 
 	/**
 	 * @author BB20101997
@@ -62,6 +47,10 @@ public final class FileWriter implements ISaveAble {
 		Object o;
 
 		switch(type) {
+			case STRING:{
+				add(s,name);
+				break;
+			}
 			case INT: {
 				o = Integer.valueOf(s);
 				add((int) o, name);
@@ -111,134 +100,38 @@ public final class FileWriter implements ISaveAble {
 
 	}
 
-	private void toObject(String name, Types type, FileWriter fw) {
-
-		switch(type) {
-			case ISAVEABLE: {
-				add(fw, name);
-				break;
-			}
-			case STRING: {
-				Object o = fw.get(LENGTH);
-				if(o instanceof Integer) {
-					int length = (int) o;
-					char[] carr = new char[length];
-					for(int i = 0; i < length; i++) {
-						o = fw.get("" + i);
-						carr[i] = (char) o;
-					}
-					add(new String(carr), name);
-				}
-				break;
-			}
+	public void readFromStream(InputStream is,boolean clear) throws IOException {
+		if(clear) {
+			ObjectList.clear();
+			ObjectNames.clear();
+			ObjectType.clear();
 		}
 
-	}
+		DataInputStream dis = new DataInputStream(is);
 
-	/**
-	 * @param is the InputStream to read the Objects from
-	 *
-	 * @return if reading was successful
-	 */
-	public void readFromStream(InputStream is) throws IOException {
+		String name;
+		Types type;
+		String s;
+		FileWriter fw;
 
-		InputStreamReader ISR = new InputStreamReader(is);
-		readFromInputStreamReader(ISR);
+		while(dis.readBoolean()) {
+			name = dis.readUTF();
+			type = Types.values()[dis.readInt()];
 
+			if(type!=Types.ISAVEABLE) {
+				s = dis.readUTF();
+				toObject(name,type,s);
+			}else{
+				fw = new FileWriter();
+				fw.readFromStream(dis, true);
+				add(fw, name);
+			}
+		}
 	}
 
 	public void readFromFile(File f) throws IOException {
 		InputStream is = new FileInputStream(f);
-		readFromStream(is);
-	}
-
-	private void readFromInputStreamReader(InputStreamReader ISR) throws IOException {
-		ObjectList.clear();
-		ObjectNames.clear();
-		ObjectType.clear();
-
-		char c;
-
-		int i;
-
-		int position = 0;// 0 if at the Name,1 if Type,2 if value
-
-		String name = "";
-		Types type = null;
-		String s = "";
-
-		boolean inString = false;
-
-		FileWriter fw = null;
-		loop:
-		while((i = ISR.read()) != -1) {
-			c = (char) i;
-
-			if(!inString) {
-
-				switch(c) {
-
-					case endOfFileWriter: {
-						break loop;
-					}
-					case innerFileWriterEnd: {
-						continue loop;
-					}
-
-					case splitCharacter: {
-						if(type == Types.ISAVEABLE || type == Types.STRING) {
-							toObject(name, type, fw);
-
-						} else {
-							toObject(name, type, s);
-						}
-						position = 0;
-						s = "";
-						continue loop;
-					}
-
-					case innerFileWriterBeginn: {
-						fw = new FileWriter();
-						fw.readFromInputStreamReader(ISR);
-						continue loop;
-					}
-					case typeSeparator: {
-						switch(position) {
-							case 0: {
-								name = s;
-								break;
-							}
-							case 1: {
-								try {
-									type = Types.values()[Integer.valueOf(s)];
-								} catch(NumberFormatException e) {
-									//noinspection UseOfSystemOutOrSystemErr
-									System.out.println(name);
-									throw e;
-								}
-								break;
-							}
-						}
-						s = "";
-						position++;
-						continue loop;
-					}
-				}
-			}
-
-			if(c == endOfString && s.length() != 0) {
-				inString = false;
-			}
-
-			if(inString) {
-				s += c;
-			}
-
-			if(c == beginOfString) {
-				inString = true;
-			}
-		}
-
+		readFromStream(is,true);
 	}
 
 	/**
@@ -250,10 +143,17 @@ public final class FileWriter implements ISaveAble {
 	 */
 	public void writeToStream(OutputStream os) throws IOException {
 
+		DataOutputStream dos = new DataOutputStream(os);
+
 		for(int i = 0; i < ObjectList.size(); i++) {
-			writeObjectToStream(ObjectList.get(i), ObjectType.get(i), ObjectNames.get(i), os);
+			dos.writeBoolean(true);
+			writeObjectToStream(ObjectList.get(i), ObjectType.get(i), ObjectNames.get(i), dos);
 		}
-		os.write(String.valueOf(endOfFileWriter).getBytes());
+
+		dos.writeBoolean(false);
+
+		dos.flush();
+
 	}
 
 	public void writeToFile(File f) throws IOException {
@@ -270,43 +170,27 @@ public final class FileWriter implements ISaveAble {
 	 * @return if the operation was successful
 	 */
 	@SuppressWarnings("StringConcatenationMissingWhitespace")
-	private void writeObjectToStream(Object obj, Types t, String name, OutputStream os) throws IOException {
+	private void writeObjectToStream(Object obj, Types t, String name, DataOutputStream os) throws IOException {
+		//Write Name
 
-		//Writing the Name
-		os.write((beginOfString + name.replaceAll("" + typeSeparator, "") + endOfString).getBytes());
-		os.write(String.valueOf(typeSeparator).getBytes());
-		//Writing the Type
-		os.write((beginOfString + String.valueOf(t.ordinal()) + endOfString).getBytes());
-		os.write(String.valueOf(typeSeparator).getBytes());
+		os.writeUTF(name);
+		//Write Type
+		os.writeInt(t.ordinal());
 
+		//Write Value
 		switch(t) {
 			case ISAVEABLE: {
-				os.write(String.valueOf(innerFileWriterBeginn).getBytes());
 				ISaveAble is = (ISaveAble) obj;
 				FileWriter fw = new FileWriter();
 				is.writeToFileWriter(fw);
 				fw.writeToStream(os);
-				os.write(String.valueOf(innerFileWriterEnd).getBytes());
-				break;
-			}
-			case STRING: {
-				FileWriter fw = new FileWriter();
-				fw.add(((String) obj).length(), LENGTH);
-				for(int i = 0; i < ((String) obj).length(); i++) {
-					fw.add(((String) obj).charAt(i), String.valueOf(i));
-				}
-				os.write(String.valueOf(innerFileWriterBeginn).getBytes());
-				fw.writeToStream(os);
-				os.write(String.valueOf(innerFileWriterEnd).getBytes());
 				break;
 			}
 			default: {
-				os.write((beginOfString + String.valueOf(obj) + endOfString).getBytes());
+				os.writeUTF(String.valueOf(obj));
 				break;
 			}
 		}
-		os.write((String.valueOf(splitCharacter)).getBytes());
-
 	}
 
 	/**

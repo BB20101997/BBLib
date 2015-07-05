@@ -4,7 +4,6 @@ import bb.util.file.FileChooser;
 import bb.util.file.database.FileWriter;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.io.File;
@@ -15,13 +14,23 @@ import java.io.IOException;
  */
 class FileWriterGUI extends JPanel implements ListSelectionListener {
 
-	public static void main(String[] tArgs) {
-		FileWriter FW = new FileWriter();
-		JFrame frame = new JFrame();
-		File f = FileChooser.chooseFile(frame, "Load", JFileChooser.FILES_ONLY);
+	public static void main(String[] tArgs) throws IOException {
 
-		if(f == null)
+		File f = null;
+
+		JFrame frame = new JFrame();
+
+		if(tArgs.length>0&&tArgs[0] != null) {
+			f = new File(tArgs[0]).getAbsoluteFile();
+		} else {
+			f = FileChooser.chooseFile(frame, "Load", JFileChooser.FILES_ONLY);
+		}
+
+		FileWriter FW = new FileWriter();
+
+		if(f == null) {
 			return;
+		}
 
 		if(!f.exists()) {
 			try {
@@ -40,6 +49,7 @@ class FileWriterGUI extends JPanel implements ListSelectionListener {
 
 		FileWriterGUI FWG = new FileWriterGUI();
 		FWG.setFileWriter(FW);
+		FWG.updateStructure();
 
 		frame.add(FWG);
 		frame.pack();
@@ -52,7 +62,7 @@ class FileWriterGUI extends JPanel implements ListSelectionListener {
 	private Box        mainBox;
 	private JPanel     displayValue;
 
-	private final ListModel<String> listModel = new ListModel<String>() {
+	private final ListModel<String> listModel = new DefaultListModel<String>() {
 
 		@Override
 		public int getSize() {
@@ -68,16 +78,6 @@ class FileWriterGUI extends JPanel implements ListSelectionListener {
 				return "Ups,not that many Entries!";
 			}
 			return FW.getObjectNames().get(index);
-		}
-
-		@Override
-		public void addListDataListener(ListDataListener l) {
-
-		}
-
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-
 		}
 	};
 
@@ -129,6 +129,8 @@ class FileWriterGUI extends JPanel implements ListSelectionListener {
 			mainBox.removeAll();
 			mainBox.add(jList);
 			mainBox.add(displayValue);
+			invalidate();
+			repaint();
 			revalidate();
 			getParent().setSize(getParent().getPreferredSize());
 		}
