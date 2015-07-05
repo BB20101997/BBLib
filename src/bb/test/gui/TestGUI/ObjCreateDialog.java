@@ -1,4 +1,4 @@
-package bb.test.gui;
+package bb.test.gui.TestGUI;
 
 import bb.test.lib.ButtonNames;
 

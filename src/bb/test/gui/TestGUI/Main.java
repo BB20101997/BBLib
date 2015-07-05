@@ -1,6 +1,4 @@
-package bb.test.gui.FileWriterGUI;
-
-import bb.test.gui.TestGUI;
+package bb.test.gui.TestGUI;
 
 @SuppressWarnings("javadoc")
 class Main {
