@@ -14,16 +14,14 @@ import java.util.logging.LogRecord;
 /**
  * Created by BB20101997 on 06.06.2015.
  */
-public class LogHandler extends Handler {
+public class BBLogHandler extends Handler {
 
 	public boolean open = true;
-	private String     name;
 	private FileWriter fw;
 	private boolean toStream = false, toFile = false, toConsole = false;
 	private OutputStream outStream;
 
-	public LogHandler(String name, File f) {
-		this.name = name;
+	public BBLogHandler(File f) {
 		try {
 			if(!f.exists()) {
 				//noinspection ResultOfMethodCallIgnored
@@ -57,7 +55,7 @@ public class LogHandler extends Handler {
 				sb = new StringBuilder();
 				sb.append("[").append(time).append("]\u0009");
 				sb.append("[").append(record.getLevel()).append("]\u0009");
-				sb.append("[").append(name).append("]\u0009");
+				sb.append("[").append(loggerName).append("]\u0009");
 				sb.append("[Line:").append(String.format("%03d", i)).append("/").append(String.format("%03d", lines.length)).append("]\u0009");
 				sb.append(s);
 				sb.append("\n");
@@ -67,7 +65,7 @@ public class LogHandler extends Handler {
 						fw.flush();
 					} catch(IOException e) {
 						e.printStackTrace();
-						//log(LogType.ERROR, "Log", "IOException while writing to Log!");
+						//log(LogType.ERROR, "Log", "IOException while writing to Log!"); //<_may cause loop!?
 					}
 				}
 				if(toConsole) {
