@@ -1,6 +1,5 @@
 package bb.net.packets.connecting;
 
-import bb.net.enums.NetworkState;
 import bb.net.interfaces.APacket;
 import bb.net.packets.DataIn;
 import bb.net.packets.DataOut;
@@ -15,12 +14,7 @@ public class HandshakePacket extends APacket {
 	private String Version = "1.0";
 	private boolean userClient;
 
-	public HandshakePacket() {
-		minNetworkState = NetworkState.UNKNOWN;
-	}
-
 	public HandshakePacket(boolean user) {
-		minNetworkState = NetworkState.UNKNOWN;
 		userClient = user;
 	}
 

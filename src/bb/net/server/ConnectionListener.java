@@ -1,6 +1,5 @@
 package bb.net.server;
 
-import bb.net.enums.NetworkState;
 import bb.net.enums.ServerStatus;
 import bb.net.handler.BasicIOHandler;
 import bb.net.interfaces.IConnectionManager;
@@ -128,12 +127,7 @@ public class ConnectionListener extends Thread {
 	}
 
 	private void updateUserCount() {
-		int i = 0;
-		for(IIOHandler a : MH.getConnections()) {
-			if(a.getNetworkState().ordinal() >= NetworkState.POST_HANDSHAKE.ordinal()) {
-				i++;
-			}
-		}
+		int i = MH.getConnections().size();
 		MH.setServerStatus(i > 0 ? i == MH.getMaxConnections() ? ServerStatus.FULL : i > MH.getMaxConnections() ? ServerStatus.OVERFILLED : ServerStatus.READY : ServerStatus.EMPTY);
 	}
 

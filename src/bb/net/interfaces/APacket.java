@@ -1,6 +1,5 @@
 package bb.net.interfaces;
 
-import bb.net.enums.NetworkState;
 import bb.net.packets.DataIn;
 import bb.net.packets.DataOut;
 
@@ -21,14 +20,10 @@ public abstract class APacket {
 			byte[] b = dataOut.getBytes();
 			p.readFromData(DataIn.newInstance(b));
 		} catch(InstantiationException | IllegalAccessException | IOException e) {
-			p = null;
 			e.printStackTrace();
 		}
 		return p;
 	}
-
-	@SuppressWarnings("CanBeFinal")
-	protected NetworkState minNetworkState = NetworkState.POST_HANDSHAKE;
 
 	protected APacket() {
 		//TODO: Add a history for the server the packet has been past over for preventing loop's
@@ -38,11 +33,6 @@ public abstract class APacket {
 			e.printStackTrace();
 			throw new RuntimeException("Missing default constructor in Packet class : " + getClass().getName());
 		}
-	}
-
-
-	public final NetworkState allowedFrom() {
-		return minNetworkState;
 	}
 
 	public abstract void writeToData(DataOut dataOut) throws IOException;

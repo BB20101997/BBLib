@@ -1,6 +1,5 @@
 package bb.net.handler;
 
-import bb.net.enums.NetworkState;
 import bb.net.enums.Side;
 import bb.net.interfaces.APacket;
 import bb.net.interfaces.IConnectionManager;
@@ -26,14 +25,12 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 	@Nullable
 	private boolean continueLoop = true;
 	private Thread thread;
-	private NetworkState status = NetworkState.UNKNOWN;
 
 	public BasicIOHandler(final InputStream IS, OutputStream OS, IConnectionManager imh, boolean client) {
 		IMH = imh;
 		//Log.getInstance().logDebug("BasicIOHandler", "Creation Streams");
 		dis = new DataInputStream(IS);
 		dos = new DataOutputStream(OS);
-		status = NetworkState.PRE_HANDSHAKE;
 		if(imh.getSide() == Side.CLIENT) {
 			startHandshake(client);
 		} else {
@@ -59,11 +56,10 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 			if(!handshakeReceived) {
 				stop();
 				//Log.getInstance().logInfo("BasicIOHandler", "Shutting down : No Handshake!");
-				status = NetworkState.SHUTDOWN;
-			} else {
-				status = NetworkState.POST_HANDSHAKE;
+			}/** else {
+				//TODO: Fill else Statement
 				//Log.getInstance().logInfo("BasicIOHandler", "Handshake received!");
-			}
+			} **/
 		}
 	}
 
@@ -161,8 +157,6 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 
 		IMH.disconnect(this);
 
-		status = NetworkState.SHUTDOWN;
-
 		try {
 			dis.close();
 		} catch(IOException e) {
@@ -187,11 +181,6 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 	@Override
 	public void receivedHandshake() {
 		handshakeReceived = true;
-	}
-
-	@Override
-	public NetworkState getNetworkState() {
-		return status;
 	}
 
 	@Override

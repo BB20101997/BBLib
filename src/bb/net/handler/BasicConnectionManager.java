@@ -1,7 +1,6 @@
 package bb.net.handler;
 
 import bb.net.client.ConnectionEstablishment;
-import bb.net.enums.NetworkState;
 import bb.net.enums.ServerStatus;
 import bb.net.enums.Side;
 import bb.net.interfaces.*;
@@ -10,8 +9,10 @@ import bb.net.packets.PacketDistributor;
 import bb.net.packets.PacketRegistrie;
 import bb.net.packets.connecting.DisconnectPacket;
 import bb.net.server.ConnectionListener;
+import bb.util.file.BBLogHandler;
 
 import javax.net.ssl.SSLSocket;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,12 @@ import java.util.logging.Logger;
 
 public class BasicConnectionManager implements IConnectionManager {
 
+
+	public final static Logger log = Logger.getLogger(BasicConnectionManager.class.getName());
+
+	static {
+		log.addHandler(new BBLogHandler(new File("/log/BBLib.log").getAbsoluteFile()));
+	}
 
 	protected       ServerStatus     serverStatus   = ServerStatus.NOT_STARTED;
 	protected final List<IIOHandler> connections    = new ArrayList<>();
@@ -71,11 +78,6 @@ public class BasicConnectionManager implements IConnectionManager {
 		}
 
 		@Override
-		public NetworkState getNetworkState() {
-			return NetworkState.USER_CLIENT;
-		}
-
-		@Override
 		public void run() {
 
 		}
@@ -107,7 +109,7 @@ public class BasicConnectionManager implements IConnectionManager {
 			if(side == Side.SERVER) {
 				Thread th;
 				for(IIOHandler iio : connections) {
-					th = new Thread(()->{iio.sendPacket(p);});
+					th = new Thread(() -> {iio.sendPacket(p);});
 					th.start();
 				}
 				return true;
@@ -124,12 +126,6 @@ public class BasicConnectionManager implements IConnectionManager {
 		@Override
 		public void receivedHandshake() {
 		}
-
-		@Override
-		public NetworkState getNetworkState() {
-			return side == Side.SERVER ? NetworkState.USER_CLIENT : NetworkState.MANAGEMENT;
-		}
-
 
 	};
 	protected SSLSocket socket;
