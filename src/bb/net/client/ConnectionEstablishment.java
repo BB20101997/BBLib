@@ -1,13 +1,15 @@
 package bb.net.client;
 
-import bb.net.interfaces.IConnectionManager;
+import bb.util.file.BBLogHandler;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import java.io.File;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Logger;
 
 
 /**
@@ -15,17 +17,21 @@ import java.security.NoSuchAlgorithmException;
  */
 public class ConnectionEstablishment {
 
+	public static final Logger log = Logger.getLogger(ConnectionEstablishment.class.getName());
+
+	static {
+		log.addHandler(new BBLogHandler(new File("/log/BBLib.log").getAbsoluteFile()));
+	}
+
 	private SSLSocket sock = null;
 
 	/**
-	 * @param imh  just needed to print out errors to the user may be removed later
 	 * @param host the host to Connect to
 	 * @param port the port the host is listening to
 	 */
 	public ConnectionEstablishment(String host, int port) {
-
+		log.entering(this.getClass().toString(),"ConnectionEstablishment");
 		try {
-
 			SSLContext sc = SSLContext.getInstance("TLS");
 			sc.init(null, null, null);
 
@@ -35,10 +41,10 @@ public class ConnectionEstablishment {
 			s.startHandshake();
 			sock = s;
 		} catch(IOException | KeyManagementException | NoSuchAlgorithmException e) {
-			//Log.getInstance().logError("ConnectionEstablisher", "I/OException : " + host);
+			log.warning("I/OException : " + host);
 			sock = null;
-			e.printStackTrace();
 		}
+		log.exiting(this.getClass().toString(),"ConnectionEstablishment");
 	}
 
 	/**
