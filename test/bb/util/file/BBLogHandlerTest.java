@@ -1,31 +1,40 @@
 package bb.util.file;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import bb.util.file.log.BBLogHandler;
+import bb.util.file.log.Constants;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by BB20101997 on 06.06.2015.
+ * Created by BB20101997 on 08. Apr. 2016.
  */
 public class BBLogHandlerTest {
 
-	Logger l;
+	private Logger l1,l2;
 
+	@Before
 	public void setUp() throws Exception {
-		File f = new File("/log/"+new SimpleDateFormat("dd-MM-yyyy").format(new Date())+"-log.txt");
-		l = Logger.getLogger("bb.util.file.LogHandlerTest");
-		l.addHandler(new BBLogHandler(f.getCanonicalFile()));
+		Logger.getLogger("").setLevel(Level.ALL);
+		l1 = Logger.getLogger("bb.util.file.BBLogHandlerTest.1");
+		l1.addHandler(new BBLogHandler(Constants.getLogFile("Test")));
+
+		l2 = Logger.getLogger("bb.util.file.BBLogHandlerTest.2");
+		l2.addHandler(new BBLogHandler(Constants.getLogFile("Test")));
 	}
 
+	@Test
 	public void testPublish() throws Exception {
-		l.info("Test Message");
+		l1.info("Test Message:1");
+		l2.info("Test Message:2");
 		StringBuilder sb = new StringBuilder();
-		for(int i= 1;i<=10;i++){
+		for(int i = 1; i <= 10; i++) {
 			sb.append("Test Line ").append(i).append("!");
-			if(i!=100){
 			sb.append("\n");
-		}}
-		l.info(sb.toString());
+		}
+		l1.info(sb.toString()+1);
+		l2.info(sb.toString()+2);
 	}
 }
