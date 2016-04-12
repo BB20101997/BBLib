@@ -53,19 +53,16 @@ public class ConnectionListener extends Thread {
 			}
 		}
 
-		for(IIOHandler ica : MH.getConnections()) {
+		MH.getConnections().stream().filter(ica -> ica instanceof BasicIOHandler).forEach(ica -> {
+			BasicIOHandler io = (BasicIOHandler) ica;
 
-			if(ica instanceof BasicIOHandler) {
-				BasicIOHandler io = (BasicIOHandler) ica;
-
-				try {
-					io.stop();
-				} catch(Throwable e) {
-					e.printStackTrace();
-				}
-
+			try {
+				io.stop();
+			} catch(Throwable e) {
+				e.printStackTrace();
 			}
-		}
+
+		});
 		MH.getConnections().clear();
 	}
 

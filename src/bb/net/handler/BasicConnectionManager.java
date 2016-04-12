@@ -9,38 +9,41 @@ import bb.net.packets.PacketDistributor;
 import bb.net.packets.PacketRegistrie;
 import bb.net.packets.connecting.DisconnectPacket;
 import bb.net.server.ConnectionListener;
-import bb.util.file.BBLogHandler;
+import bb.util.file.log.BBLogHandler;
+import bb.util.file.log.Constants;
 
 import javax.net.ssl.SSLSocket;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+@SuppressWarnings("WeakerAccess")
 public class BasicConnectionManager implements IConnectionManager {
 
 
-	public final static Logger log = Logger.getLogger(BasicConnectionManager.class.getName());
-
+	private final static Logger log;
 	static {
-		log.addHandler(new BBLogHandler(new File("/log/BBLib.log").getAbsoluteFile()));
+		log = Logger.getLogger(BasicConnectionManager.class.getName());
+		log.addHandler(new BBLogHandler(Constants.getBBLibLogFile()));
 	}
 
-	protected       ServerStatus     serverStatus   = ServerStatus.NOT_STARTED;
-	protected final List<IIOHandler> connections    = new ArrayList<>();
-	protected       int              maxConnections = 20;
+	protected     ServerStatus     serverStatus   = ServerStatus.NOT_STARTED;
+	private final List<IIOHandler> connections    = new ArrayList<>();
+	private       int              maxConnections = 20;
 
 	protected IPacketRegistrie   packetRegistrie;
 	protected IPacketDistributor packetDistributor;
 	protected List<AIConnectionEventHandler> aichehList = new ArrayList<>();
 
 	protected List<IConnectionEventHandler> IConnectionEventHandlerList = new ArrayList<>();
+	//just a loopback to the inbound connection
 	protected IIOHandler                    LOCAL                       = new IIOHandler() {
+
 		@Override
 		public void start() {
-
 		}
 
 		@Override
@@ -79,12 +82,14 @@ public class BasicConnectionManager implements IConnectionManager {
 
 		@Override
 		public void run() {
-
 		}
 	};
-	protected IIOHandler SERVER;
-	protected Side       side;
-	protected IIOHandler ALL = new IIOHandler() {
+	//the Server connection on the Clients side, a loopback on the Servers side
+	private IIOHandler SERVER;
+	//server or client?
+	private Side       side;
+	//for broadcasts
+	private IIOHandler ALL = new IIOHandler() {
 		@Override
 		public void start() {
 
@@ -128,11 +133,12 @@ public class BasicConnectionManager implements IConnectionManager {
 		}
 
 	};
-	protected SSLSocket socket;
+	private SSLSocket socket;
 
 	protected ConnectionListener conLis;
 
 	public BasicConnectionManager() {
+		log.log(Level.INFO,"Constructor");
 		packetRegistrie = new PacketRegistrie();
 		packetDistributor = new PacketDistributor(this);
 		packetDistributor.registerPacketHandler(new DefaultPacketHandler(this));
@@ -154,11 +160,13 @@ public class BasicConnectionManager implements IConnectionManager {
 	}
 
 	public void shutdown() {
+		log.log(Level.INFO,"Starting Shutdown");
 		if(conLis != null) {
 			conLis.end();
 		}
 		disconnect(ALL());
 		serverStatus = ServerStatus.SHUTDOWN;
+		log.log(Level.INFO, "Finished Shutdown");
 	}
 
 	public IIOHandler LOCAL() {
@@ -186,10 +194,12 @@ public class BasicConnectionManager implements IConnectionManager {
 
 	@Override
 	public void addConnectionEventHandler(IConnectionEventHandler iceh) {
+		log.log(Level.FINER,"Adding an EventHandler");
 		IConnectionEventHandlerList.add(iceh);
 	}
 
 	public void handleIConnectionEvent(IConnectionEvent event) {
+		log.log(Level.FINE,"Handling Event:"+event);
 		for(IConnectionEventHandler iceh : IConnectionEventHandlerList) {
 			iceh.HandleEvent(event);
 		}
@@ -197,17 +207,18 @@ public class BasicConnectionManager implements IConnectionManager {
 
 	@Override
 	public void sendPackage(APacket p, IIOHandler target) {
+		log.log(Level.FINE, "Sending Packet "+p+" to Target "+target);
 		if(side == Side.CLIENT&&target!=LOCAL()) {
 			if(SERVER != null) {
 				SERVER.sendPacket(p);
 			} else {
-				Logger.getLogger("bb.net.handler.BasicConnectionManager").log(Level.FINE,"SERVER is equivalent to null when sending Package!");
+				log.log(Level.FINE,"SERVER is equivalent to null when sending Package!");
 			}
 		} else {
 			if(target!=null){
 			target.sendPacket(p);
 		}else{
-				System.err.println("Null target!");
+				log.log(Level.FINE, "Target is equivalent to null when sending Package!");
 				throw new RuntimeException("Null target critical failure!");
 			}
 		}
@@ -215,7 +226,7 @@ public class BasicConnectionManager implements IConnectionManager {
 
 	@Override
 	public void disconnect(IIOHandler a) {
-
+		log.fine("Disconnect:"+a);
 		if(side == Side.CLIENT) {
 
 			if(SERVER != null) {
@@ -253,6 +264,7 @@ public class BasicConnectionManager implements IConnectionManager {
 
 	@Override
 	public boolean connect(String host, int port) {
+		log.fine("Connecting to:"+host+" on Port:"+port);
 		if(side == Side.CLIENT) {
 			if(SERVER != null) {
 				disconnect(SERVER);

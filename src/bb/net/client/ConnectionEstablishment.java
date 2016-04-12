@@ -1,11 +1,11 @@
 package bb.net.client;
 
-import bb.util.file.BBLogHandler;
+import bb.util.file.log.BBLogHandler;
+import bb.util.file.log.Constants;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.File;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -17,10 +17,11 @@ import java.util.logging.Logger;
  */
 public class ConnectionEstablishment {
 
-	public static final Logger log = Logger.getLogger(ConnectionEstablishment.class.getName());
+	public static final Logger log;
 
 	static {
-		log.addHandler(new BBLogHandler(new File("/log/BBLib.log").getAbsoluteFile()));
+		log = Logger.getLogger(ConnectionEstablishment.class.getName());
+		log.addHandler(new BBLogHandler(Constants.getBBLibLogFile()));
 	}
 
 	private SSLSocket sock = null;

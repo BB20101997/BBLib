@@ -7,15 +7,24 @@ import bb.net.interfaces.IIOHandler;
 import bb.net.packets.DataOut;
 import bb.net.packets.connecting.DisconnectPacket;
 import bb.net.packets.connecting.HandshakePacket;
+import bb.util.file.log.BBLogHandler;
+import bb.util.file.log.Constants;
 import com.sun.istack.internal.Nullable;
 
 import java.io.*;
+import java.util.logging.Logger;
 
 
 /**
  * @author BB20101997
  */
 public class BasicIOHandler implements Runnable, IIOHandler {
+
+	private final static Logger log;
+	static{
+		log = Logger.getLogger(BasicIOHandler.class.getName());
+		log.addHandler(new BBLogHandler(Constants.getBBLibLogFile()));
+	}
 
 	private final IConnectionManager IMH;
 	private final DataInputStream    dis;
@@ -28,7 +37,7 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 
 	public BasicIOHandler(final InputStream IS, OutputStream OS, IConnectionManager imh, boolean client) {
 		IMH = imh;
-		//Log.getInstance().logDebug("BasicIOHandler", "Creation Streams");
+		log.fine("Creating Streams");
 		dis = new DataInputStream(IS);
 		dos = new DataOutputStream(OS);
 		if(imh.getSide() == Side.CLIENT) {
@@ -44,7 +53,7 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 
 		@Override
 		public void run() {
-			for(int i = 0; !handshakeReceived || i > 900000; i++) {
+			for(int i = 0; (!handshakeReceived) && (i < 900000); i++) {
 				try {
 					synchronized(obj) {
 						obj.wait(10);
@@ -55,15 +64,16 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 			}
 			if(!handshakeReceived) {
 				stop();
-				//Log.getInstance().logInfo("BasicIOHandler", "Shutting down : No Handshake!");
-			}/** else {
+				log.fine("Shutting down : No Handshake!");
+			}else {
 				//TODO: Fill else Statement
-				//Log.getInstance().logInfo("BasicIOHandler", "Handshake received!");
-			} **/
+				log.fine("Handshake received!");
+			}
 		}
 	}
 
 	private void startHandshake(boolean client) {
+		log.fine("Starting Handshake");
 		sendPacket(new HandshakePacket(client));
 	}
 

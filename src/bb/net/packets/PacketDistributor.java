@@ -1,11 +1,12 @@
 package bb.net.packets;
 
 import bb.net.interfaces.*;
+import bb.util.file.log.BBLogHandler;
+import bb.util.file.log.Constants;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -14,7 +15,11 @@ import java.util.logging.Logger;
 public class PacketDistributor implements IPacketDistributor {
 
 	private final IConnectionManager IMH;
-	private static final Logger BNPPDLogger = Logger.getLogger("bb.net.packets.PacketDistributor");
+	private static final Logger log;
+	static {
+		log = Logger.getLogger("bb.net.packets.PacketDistributor");
+		log.addHandler(new BBLogHandler(Constants.getBBLibLogFile()));
+	}
 
 	public PacketDistributor(IConnectionManager imh) {
 		IMH = imh;
@@ -24,6 +29,7 @@ public class PacketDistributor implements IPacketDistributor {
 
 	@Override
 	public int registerPacketHandler(IPacketHandler iph) {
+		log.finer("Registering a PacketHandler");
 		synchronized(PHList) {
 			if(!PHList.contains(iph)) {
 				PHList.add(iph);
@@ -34,19 +40,18 @@ public class PacketDistributor implements IPacketDistributor {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void distributePacket(int id, byte[] data, IIOHandler sender) {
+	public void distributePacket(int id,final byte[] data, IIOHandler sender) {
 
 		APacket p = IMH.getPacketRegistrie().getNewPacketOfID(id);
 
-		//Log.getInstance().logDebug("PacketDistributor", "Distributing Packet\nID:" + id + "\nClass:" + p.getClass());
-
+		log.fine("Distributing Packet\nID:" + id + "\nClass:" + p.getClass());
+		log.fine("Incoming Packet with " + data.length + " bytes!" + System.lineSeparator() + "Packet is of class:" + p.getClass());
 		try {
-			BNPPDLogger.log(Level.FINE, "Incoming Packet with " + data.length + " bytes!" + System.lineSeparator() + "Packet is of class:" + p.getClass());
 			p.readFromData(DataIn.newInstance(data.clone()));
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-
+		log.finer("Packet:" + p);
 		main:
 		for(IPacketHandler iph : PHList) {
 			for(Class c : iph.getAssociatedPackets()) {
