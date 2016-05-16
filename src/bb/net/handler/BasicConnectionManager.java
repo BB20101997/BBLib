@@ -138,10 +138,7 @@ public class BasicConnectionManager implements IConnectionManager {
 	protected ConnectionListener conLis;
 
 	public BasicConnectionManager() {
-		log.log(Level.INFO,"Constructor");
-		packetRegistrie = new PacketRegistrie();
-		packetDistributor = new PacketDistributor(this);
-		packetDistributor.registerPacketHandler(new DefaultPacketHandler(this));
+		this(Side.CLIENT);
 	}
 
 	public BasicConnectionManager(Side s) {
@@ -149,7 +146,10 @@ public class BasicConnectionManager implements IConnectionManager {
 	}
 
 	public BasicConnectionManager(Side s, int port) {
-		this();
+		log.log(Level.INFO, "Constructor");
+		packetRegistrie = new PacketRegistrie();
+		packetDistributor = new PacketDistributor(this);
+		packetDistributor.registerPacketHandler(new DefaultPacketHandler(this));
 		side = s;
 		if(side == Side.SERVER) {
 			//whoops was supposed to be vice-versa
