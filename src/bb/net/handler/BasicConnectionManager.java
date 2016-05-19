@@ -9,11 +9,13 @@ import bb.net.packets.PacketDistributor;
 import bb.net.packets.PacketRegistrie;
 import bb.net.packets.connecting.DisconnectPacket;
 import bb.net.server.ConnectionListener;
+import bb.util.event.EventHandler;
 import bb.util.file.log.BBLogHandler;
 import bb.util.file.log.Constants;
 
 import javax.net.ssl.SSLSocket;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -36,11 +38,10 @@ public class BasicConnectionManager implements IConnectionManager {
 
 	protected IPacketRegistrie   packetRegistrie;
 	protected IPacketDistributor packetDistributor;
-	protected List<AIConnectionEventHandler> aichehList = new ArrayList<>();
 
-	protected List<IConnectionEventHandler> IConnectionEventHandlerList = new ArrayList<>();
+	protected List<EventHandler<IConnectionEvent>> IConnectionEventHandlerList = new ArrayList<>();
 	//just a loopback to the inbound connection
-	protected IIOHandler                    LOCAL                       = new IIOHandler() {
+	protected IIOHandler         LOCAL                       = new IIOHandler() {
 
 		@Override
 		public void start() {
@@ -193,15 +194,27 @@ public class BasicConnectionManager implements IConnectionManager {
 	}
 
 	@Override
-	public void addConnectionEventHandler(IConnectionEventHandler iceh) {
+	public void addConnectionEventHandler(EventHandler<IConnectionEvent> iceh) {
 		log.log(Level.FINER,"Adding an EventHandler");
 		IConnectionEventHandlerList.add(iceh);
 	}
 
 	public void handleIConnectionEvent(IConnectionEvent event) {
 		log.log(Level.FINE,"Handling Event:"+event);
-		for(IConnectionEventHandler iceh : IConnectionEventHandlerList) {
-			iceh.HandleEvent(event);
+		for(EventHandler<IConnectionEvent> iceh : IConnectionEventHandlerList) {
+			try {
+				iceh.HandleEvent(event);
+			} catch(NoSuchMethodException e) {
+				System.err.println("The IIConnectionHandlerEventHandler " + iceh.getClass() + " didn't support the event " + event.getClass());
+				System.err.println("Probably not a bug just an Event not handled by this Handler!");
+			} catch(InvocationTargetException e) {
+				System.err.println("The IIConnectionHandlerEventHandler " + iceh.getClass() + " didn't fail handling the event " + event.getClass());
+				System.err.println("All Exceptions should be handled internally and shouldn't land here!This is therefor a bug,pleas contact the developer! ");
+				e.printStackTrace();
+			} catch(IllegalAccessException e) {
+				System.err.println("The IIConnectionHandlerEventHandler " + iceh.getClass() + " was not accessible for the event " + event.getClass());
+				System.err.println("Please check if the access is public!Inform the developer this is most definitely a bug!");
+			}
 		}
 	}
 

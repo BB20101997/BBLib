@@ -2,6 +2,7 @@ package bb.net.interfaces;
 
 import bb.net.enums.ServerStatus;
 import bb.net.enums.Side;
+import bb.util.event.EventHandler;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public interface IConnectionManager {
 
 	IPacketDistributor getPacketDistributor();
 
-	void addConnectionEventHandler(IConnectionEventHandler iceh);
+	void addConnectionEventHandler(EventHandler<IConnectionEvent> iceh);
 
 	void handleIConnectionEvent(IConnectionEvent event);
 

@@ -49,7 +49,7 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 
 	private class handshakeRunnable implements Runnable {
 
-		public final Object obj = new Object();
+		final Object obj = new Object();
 
 		@Override
 		public void run() {
@@ -103,7 +103,7 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 
 		if(IMH.getPacketRegistrie().containsPacket(p.getClass())) {
 
-			//Log.getInstance().logDebug("BasicIOHandler", "Sending Packet : " + p.getClass());
+			log.finest("Sending Packet:"+p.toString());
 
 			int id = IMH.getPacketRegistrie().getID(p.getClass());
 
@@ -134,9 +134,10 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 
 		return false;
 	}	@Override
+
 	public void run() {
 
-		//Log.getInstance().logDebug("BasicIOHandler", "Starting BasicIOHandler");
+		log.entering(this.getClass().getName(),"run");
 
 		if(IMH.getSide() == Side.SERVER) {
 			Thread t = new Thread(new handshakeRunnable());
@@ -152,18 +153,18 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 				length = dis.readInt();
 				byte[] by = new byte[length];
 				dis.readFully(by);
-				//Log.getInstance().logDebug("BasicIOHandler", "IOHandler: PacketReceived : " + IMH.getIChatInstance().getPacketRegistrie().getPacketClassByID(id) + " on Side : " + IMH.getSide());
+				log.fine("Packet Received:"+IMH.getPacketRegistrie().getPacketClassByID(id)+ " on Side: "+IMH.getSide());
 				IMH.getPacketDistributor().distributePacket(id, by, this);
 
 			} catch(Exception e) {
 				sendPacket(new DisconnectPacket());
-				//Log.getInstance().logError("BasicIOHandler", "Exception in IOHandler, closing connection!");
+				log.severe("Exception in run, closing connection!");
 				e.printStackTrace();
 				continueLoop = false;
 			}
 		}
 
-		//Log.getInstance().logDebug("BasicIOHandler","Stopping IOHandler");
+		log.fine("Stopping IOHandler!");
 
 		IMH.disconnect(this);
 

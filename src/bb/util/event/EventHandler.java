@@ -8,10 +8,12 @@ import java.lang.reflect.Method;
  */
 public abstract class EventHandler<E extends IEvent> {
 
+	//name of the function that Handles the Event
 	private final String funcName;
 
 	public EventHandler() {
-		funcName = "handleEvent";
+		//use default name for handeling function
+		this("handleEvent");
 	}
 
 	public EventHandler(String s) {
@@ -22,25 +24,9 @@ public abstract class EventHandler<E extends IEvent> {
 		}
 	}
 
-	public void HandleEvent(E iicev) {
-		HandleEvent(this, funcName, iicev);
-	}
-
-	public static <V extends IEvent> void HandleEvent(Object instance, String funcName, V iicev) {
-		try {
-			Method method = instance.getClass().getDeclaredMethod(funcName, iicev.getClass());
-			method.invoke(instance, iicev);
-		} catch(NoSuchMethodException e) {
-			System.err.println("The IIConnectionHandlerEventHandler " + instance.getClass() + " didn't support the event " + iicev.getClass());
-			System.err.println("Probably not a bug just an Event not handled by this Handler!");
-		} catch(InvocationTargetException e) {
-			System.err.println("The IIConnectionHandlerEventHandler " + instance.getClass() + " didn't fail handling the event " + iicev.getClass());
-			System.err.println("All Exceptions should be handled internally and shouldn't land here!This is therefor a bug,pleas contact the developer! ");
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			System.err.println("The IIConnectionHandlerEventHandler " + instance.getClass() + " was not accessible for the event " + iicev.getClass());
-			System.err.println("Please check if the access is public!Inform the developer this is most definitely a bug!");
-		}
+	public void HandleEvent(E event) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		Method method = this.getClass().getDeclaredMethod(funcName, event.getClass());
+		method.invoke(this, event);
 	}
 
 }

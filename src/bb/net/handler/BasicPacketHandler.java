@@ -4,16 +4,26 @@ import bb.net.interfaces.APacket;
 import bb.net.interfaces.IIOHandler;
 import bb.net.interfaces.IPacketHandler;
 import bb.net.interfaces.IPacketRegistrie;
+import bb.util.file.log.BBLogHandler;
+import bb.util.file.log.Constants;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by BB20101997 on 31.08.2014.
  */
 public abstract class BasicPacketHandler implements IPacketHandler {
+
+	private static final Logger log;
+
+	static {
+		log = Logger.getLogger(BasicPacketHandler.class.getName());
+		log.addHandler(new BBLogHandler(Constants.getLogFile("BBLib")));
+	}
 
 	protected final IPacketRegistrie packetRegistrie;
 
@@ -26,7 +36,8 @@ public abstract class BasicPacketHandler implements IPacketHandler {
 	@SuppressWarnings("unchecked")
 	public final void HandlePacket(APacket aPacket, IIOHandler sender) {
 
-		//Log.getInstance.logInfo("BasicPacketHandler", aPacket.getClass() + ", ID : " + id);
+
+		log.finer("Handling Packet \n"+aPacket.getClass().toString());
 
 		Method m = null;
 		try {
