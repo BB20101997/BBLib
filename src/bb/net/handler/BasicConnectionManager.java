@@ -139,25 +139,19 @@ public class BasicConnectionManager implements IConnectionManager {
 	protected ConnectionListener conLis;
 
 	public BasicConnectionManager() {
-		this(Side.CLIENT);
-	}
-
-	public BasicConnectionManager(Side s) {
-		this(s, 256);
-	}
-
-	public BasicConnectionManager(Side s, int port) {
 		log.log(Level.INFO, "Constructor");
 		packetRegistrie = new PacketRegistrie();
 		packetDistributor = new PacketDistributor(this);
 		packetDistributor.registerPacketHandler(new DefaultPacketHandler(this));
-		side = s;
-		if(side == Side.SERVER) {
-			//whoops was supposed to be vice-versa
-			SERVER = LOCAL;
-			conLis = new ConnectionListener(port, this);
-			new Thread(conLis).start();
-		}
+		side = Side.CLIENT;
+	}
+
+	public BasicConnectionManager(int port){
+		this();
+		side = Side.SERVER;
+		SERVER = LOCAL;
+		conLis = new ConnectionListener(port, this);
+		new Thread(conLis).start();
 	}
 
 	public void shutdown() {
