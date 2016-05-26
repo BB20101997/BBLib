@@ -9,7 +9,6 @@ import bb.net.packets.connecting.DisconnectPacket;
 import bb.net.packets.connecting.HandshakePacket;
 import bb.util.file.log.BBLogHandler;
 import bb.util.file.log.Constants;
-import com.sun.istack.internal.Nullable;
 
 import java.io.*;
 import java.util.logging.Logger;
@@ -31,7 +30,6 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 	private final DataOutputStream   dos;
 	private boolean handshakeReceived = false;
 
-	@Nullable
 	private boolean continueLoop = true;
 	private Thread thread;
 

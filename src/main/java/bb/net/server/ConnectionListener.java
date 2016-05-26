@@ -5,7 +5,6 @@ import bb.net.handler.BasicIOHandler;
 import bb.net.interfaces.IConnectionManager;
 import bb.net.interfaces.IIOHandler;
 import bb.net.packets.connecting.DisconnectPacket;
-import com.sun.istack.internal.NotNull;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
@@ -31,7 +30,7 @@ public class ConnectionListener extends Thread {
 	/**
 	 * @param p the Port the ConnectionListener will use
 	 */
-	public ConnectionListener(int p, @NotNull IConnectionManager m) {
+	public ConnectionListener(int p, IConnectionManager m) {
 		MH = m;
 		port = p;
 	}

@@ -87,8 +87,7 @@ class FileWriterGUI extends JPanel implements ListSelectionListener {
 
 	private void setup() {
 		mainBox = Box.createHorizontalBox();
-		//noinspection unchecked
-		jList = new JList(listModel);
+		jList = new JList<>(listModel);
 		jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jList.addListSelectionListener(this);
 		displayValue = new JPanel();

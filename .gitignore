@@ -1,6 +1,7 @@
 /eclipse/
 /bin
+/build/
 /.idea/
 /out/
-*.fw
 /logs/
+*.fw
