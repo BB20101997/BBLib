@@ -5,3 +5,5 @@
 /out/
 /logs/
 *.fw
+/.gradle/
+/gradle/
