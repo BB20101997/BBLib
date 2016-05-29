@@ -86,7 +86,7 @@ public class BasicConnectionManager implements IConnectionManager {
 		}
 	};
 	//the Server connection on the Clients side, a loopback on the Servers side
-	private IIOHandler SERVER;
+	protected IIOHandler SERVER;
 	//server or client?
 	private Side       side;
 	//for broadcasts
