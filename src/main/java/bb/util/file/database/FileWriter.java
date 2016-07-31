@@ -4,11 +4,13 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static bb.util.file.database.FileWriter.Types.OBJECT_ARRAY;
+
 /**
  * @author BB20101997
  */
 @SuppressWarnings("javadoc")
-public final class FileWriter implements ISaveAble {
+public final class FileWriter implements ISaveAble, ISaveAbleFactory<FileWriter> {
 
 	/**
 	 * The Version of the FileWriter
@@ -22,7 +24,7 @@ public final class FileWriter implements ISaveAble {
 	 * @author BB20101997
 	 */
 	public enum Types {
-		INT, STRING, ISAVEABLE, BYTE, BOOLEAN, FLOAT, DOUBLE, SHORT, LONG, CHAR
+		INT, STRING, ISAVEABLE, BYTE, BOOLEAN, FLOAT, DOUBLE, SHORT, LONG, CHAR, OBJECT_ARRAY
 	}
 
 	public FileWriter() {
@@ -47,8 +49,8 @@ public final class FileWriter implements ISaveAble {
 		Object o;
 
 		switch(type) {
-			case STRING:{
-				add(s,name);
+			case STRING: {
+				add(s, name);
 				break;
 			}
 			case INT: {
@@ -100,7 +102,7 @@ public final class FileWriter implements ISaveAble {
 
 	}
 
-	public void readFromStream(InputStream is,boolean clear) throws IOException {
+	public void readFromStream(InputStream is, boolean clear) throws IOException {
 		if(clear) {
 			ObjectList.clear();
 			ObjectNames.clear();
@@ -118,20 +120,34 @@ public final class FileWriter implements ISaveAble {
 			name = dis.readUTF();
 			type = Types.values()[dis.readInt()];
 
-			if(type!=Types.ISAVEABLE) {
-				s = dis.readUTF();
-				toObject(name,type,s);
-			}else{
-				fw = new FileWriter();
-				fw.readFromStream(dis, true);
-				add(fw, name);
+			switch(type) {
+				case OBJECT_ARRAY:{
+					fw = new FileWriter();
+					fw.readFromStream(dis,true);
+					FileWriter[] temp = new FileWriter[(int) fw.get(SIZE)];
+					for(int i = 0; i<temp.length;i++){
+						temp[i] = (FileWriter) fw.get(i+"");
+					}
+					add(temp,name);
+					break;
+				}
+				case ISAVEABLE: {
+					fw = new FileWriter();
+					fw.readFromStream(dis, true);
+					add(fw, name);
+					break;
+				}
+				default: {
+					s = dis.readUTF();
+					toObject(name, type, s);
+				}
 			}
 		}
 	}
 
 	public void readFromFile(File f) throws IOException {
 		InputStream is = new FileInputStream(f);
-		readFromStream(is,true);
+		readFromStream(is, true);
 	}
 
 	/**
@@ -171,14 +187,14 @@ public final class FileWriter implements ISaveAble {
 	 */
 	@SuppressWarnings("StringConcatenationMissingWhitespace")
 	private void writeObjectToStream(Object obj, Types t, String name, DataOutputStream os) throws IOException {
-		//Write Name
 
+		//Write Name
 		os.writeUTF(name);
 		//Write Type
 		os.writeInt(t.ordinal());
-
 		//Write Value
 		switch(t) {
+			case OBJECT_ARRAY:
 			case ISAVEABLE: {
 				ISaveAble is = (ISaveAble) obj;
 				FileWriter fw = new FileWriter();
@@ -296,7 +312,7 @@ public final class FileWriter implements ISaveAble {
 	}
 
 	/**
-	 * @param i    the chat to be added
+	 * @param i    the char to be added
 	 * @param name the name of the char
 	 */
 	public void add(char i, String name) {
@@ -306,10 +322,50 @@ public final class FileWriter implements ISaveAble {
 		ObjectType.add(Types.CHAR);
 	}
 
-	public Object get(String name) {
+	private final static String SIZE = "SIZE";
+
+	public void add(ISaveAble[] i, String name) {
+		FileWriter TempFW = new FileWriter();
+		TempFW.add(i.length, SIZE);
+		FileWriter Temp;
+		for(int ii = 0; ii < i.length; ii++) {
+			Temp = new FileWriter();
+			i[ii].writeToFileWriter(Temp);
+			TempFW.add(Temp, ii + "");
+		}
+		ObjectList.add(TempFW);
+		ObjectNames.add(name);
+		ObjectType.add(OBJECT_ARRAY);
+	}
+
+
+	public Object get(String name) throws IllegalAccessError {
 		int index;
 		if((index = ObjectNames.indexOf(name)) != -1) {
+			if(ObjectType.get(index) == OBJECT_ARRAY) {
+				//technically miss used exception I think, but it fits the purpose
+				throw new IllegalAccessError("You may only access saved Arrays via the getArray function!");
+			}
 			return ObjectList.get(index);
+		}
+		return null;
+	}
+
+	public <E extends ISaveAble> E[] getArray(String name, ISaveAbleFactory<E> factory) throws IllegalAccessError {
+		int index;
+		if((index = ObjectNames.indexOf(name)) != -1) {
+			if(ObjectType.get(index) != OBJECT_ARRAY) {
+				//technically miss used exception I think, but it fits the purpose
+				throw new IllegalAccessError("You may only access saved Arrays via the getArray function!");
+			}
+
+			FileWriter TempFW = (FileWriter) ObjectList.get(index);
+			E[] resArr = factory.getNewArrayInstance((int) TempFW.get(SIZE));
+			for(int it = 0; it < resArr.length; it++) {
+				resArr[it] = factory.getNewInstance();
+				resArr[it].loadFromFileWriter((FileWriter) TempFW.get(it + ""));
+			}
+			return resArr;
 		}
 		return null;
 	}
@@ -354,5 +410,15 @@ public final class FileWriter implements ISaveAble {
 		ObjectList.addAll(fw.ObjectList);
 		ObjectNames.addAll(fw.ObjectNames);
 		ObjectType.addAll(fw.ObjectType);
+	}
+
+	@Override
+	public FileWriter getNewInstance() {
+		return new FileWriter();
+	}
+
+	@Override
+	public FileWriter[] getNewArrayInstance(int size) {
+		return new FileWriter[size];
 	}
 }

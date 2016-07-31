@@ -1,6 +1,7 @@
 package bb.net.handler;
 
 import bb.net.enums.Side;
+import bb.net.event.ConnectionClosedEvent;
 import bb.net.interfaces.APacket;
 import bb.net.interfaces.IConnectionManager;
 import bb.net.interfaces.IIOHandler;
@@ -166,17 +167,26 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 
 		IMH.disconnect(this);
 
+		boolean successfullClosed = true;
+
 		try {
 			dis.close();
 		} catch(IOException e) {
+			successfullClosed = false;
 			e.printStackTrace();
 		}
 
 		try {
 			dos.close();
 		} catch(IOException e) {
+			successfullClosed = false;
 			e.printStackTrace();
 		}
+
+		if(successfullClosed){
+			IMH.handleIConnectionEvent(new ConnectionClosedEvent(this));
+		}
+
 
 	}
 
