@@ -45,7 +45,7 @@ public abstract class BasicPacketHandler implements IPacketHandler {
 			m.invoke(this, aPacket, sender);
 		} catch(NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
 			if(m != null) {
-				System.err.println(m.getName());
+				System.err.println(m.getName()+":"+aPacket.getClass().getName());
 			}
 			e.printStackTrace();
 		}
