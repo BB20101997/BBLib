@@ -28,9 +28,17 @@ public interface IConnectionManager {
 	 */
 	IIOHandler ALL();
 
-	IPacketRegistrie getPacketRegistrie();
+	@Deprecated
+	default IPacketRegistrie getPacketRegistrie(){
+		return getPacketManager();
+	}
 
-	IPacketDistributor getPacketDistributor();
+	@Deprecated
+	default IPacketDistributor getPacketDistributor(){
+		return getPacketManager();
+	}
+
+	IPacketManager getPacketManager();
 
 	void addConnectionEventHandler(EventHandler<IConnectionEvent> iceh);
 

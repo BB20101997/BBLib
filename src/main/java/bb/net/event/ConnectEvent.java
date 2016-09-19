@@ -9,6 +9,7 @@ import bb.net.interfaces.IIOHandler;
 public class ConnectEvent implements IConnectionEvent {
 
 	private IIOHandler iio;
+	//TODO find purpose of bool, possible if a client is connecting rather than a server?
 	private boolean    bool;
 
 	public ConnectEvent(IIOHandler io, boolean userClinet) {
