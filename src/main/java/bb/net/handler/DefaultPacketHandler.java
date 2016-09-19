@@ -5,7 +5,6 @@ import bb.net.event.ConnectEvent;
 import bb.net.event.DisconnectEvent;
 import bb.net.interfaces.IConnectionManager;
 import bb.net.interfaces.IIOHandler;
-import bb.net.interfaces.IPacketRegistrie;
 import bb.net.packets.connecting.DisconnectPacket;
 import bb.net.packets.connecting.HandshakePacket;
 import bb.net.packets.connecting.PacketSyncPacket;
@@ -15,15 +14,14 @@ import bb.net.packets.connecting.PacketSyncPacket;
  */
 public class DefaultPacketHandler extends BasicPacketHandler {
 
-	protected final IConnectionManager ich;
+	final IConnectionManager ich;
 
-	public DefaultPacketHandler(IConnectionManager icm) {
-		super(icm.getPacketRegistrie());
-		ich = icm;
-		IPacketRegistrie pr = icm.getPacketRegistrie();
-		addAssociatedPacket(pr,DisconnectPacket.class);
-		addAssociatedPacket(pr,HandshakePacket.class);
-		addAssociatedPacket(pr,PacketSyncPacket.class);
+	public DefaultPacketHandler(IConnectionManager pr) {
+		super(pr.getPacketRegistrie());
+		ich = pr;
+		addAssociatedPacket(DisconnectPacket.class);
+		addAssociatedPacket(HandshakePacket.class);
+		addAssociatedPacket(PacketSyncPacket.class);
 	}
 
 	@SuppressWarnings("UnusedParameters")
@@ -39,6 +37,6 @@ public class DefaultPacketHandler extends BasicPacketHandler {
 
 	@SuppressWarnings("UnusedParameters")
 	public void handlePacket(PacketSyncPacket psp, IIOHandler iio) {
-		ich.getPacketRegistrie().handelSyncPacket(psp);
+		packetRegistrie.handelSyncPacket(psp);
 	}
 }

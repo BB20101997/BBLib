@@ -12,8 +12,6 @@ import java.util.logging.Logger;
 /**
  * Created by BB20101997 on 31.08.2014. All incoming Packets land here and get distributed to the appropriate Handler
  */
-@SuppressWarnings("deprecation")
-@Deprecated
 public class PacketDistributor implements IPacketDistributor {
 
 	private final IConnectionManager IMH;

@@ -6,13 +6,12 @@ import bb.net.packets.connecting.PacketSyncPacket;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by BB20101997 on 30.08.2014.
  */
-@SuppressWarnings("deprecation")
-@Deprecated
 public class PacketRegistrie implements IPacketRegistrie {
 
 	private final List<Class<? extends APacket>> PList = new ArrayList<>();
@@ -33,15 +32,17 @@ public class PacketRegistrie implements IPacketRegistrie {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public PacketSyncPacket getSyncPacket() {
-		List<Class<? extends APacket>> clazzList = new ArrayList<>(PList);
-		return new PacketSyncPacket(clazzList);
+		Class<? extends APacket>[] pa = new Class[0];
+		pa = PList.toArray(pa);
+		return new PacketSyncPacket(pa);
 	}
 
 	@Override
 	public void handelSyncPacket(PacketSyncPacket psp) {
 		PList.clear();
-		PList.addAll(psp.getPackageClassList());
+		Collections.addAll(PList, psp.getPackageClasses());
 	}
 
 	public APacket getNewPacketOfID(int id) {

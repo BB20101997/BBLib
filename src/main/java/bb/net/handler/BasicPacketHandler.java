@@ -25,7 +25,6 @@ public abstract class BasicPacketHandler implements IPacketHandler {
 		log.addHandler(new BBLogHandler(Constants.getLogFile("BBLib")));
 	}
 
-	@Deprecated
 	protected final IPacketRegistrie packetRegistrie;
 
 	private final List<Class<? extends APacket>> CList = new ArrayList<>();
@@ -59,24 +58,12 @@ public abstract class BasicPacketHandler implements IPacketHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Deprecated
 	protected final void addAssociatedPacket(Class<? extends APacket> cp) {
 		synchronized(CList) {
 			if(!CList.contains(cp)) {
 				CList.add(cp);
 				if(!packetRegistrie.containsPacket(cp)) {
 					packetRegistrie.registerPacket(cp);
-				}
-			}
-		}
-	}
-
-	protected final void addAssociatedPacket(IPacketRegistrie pr, Class<? extends APacket> cp) {
-		synchronized(CList) {
-			if(!CList.contains(cp)) {
-				CList.add(cp);
-				if(!pr.containsPacket(cp)) {
-					pr.registerPacket(cp);
 				}
 			}
 		}

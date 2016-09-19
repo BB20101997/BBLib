@@ -3,7 +3,6 @@ package bb.net.interfaces;
 /**
  * Created by BB20101997 on 03.09.2014.
  */
-@Deprecated
 public interface IPacketDistributor {
 
 

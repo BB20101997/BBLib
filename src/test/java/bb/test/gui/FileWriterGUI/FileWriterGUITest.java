@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
 
 /**
  * Created by BB20101997 on 03.07.2015.
@@ -18,8 +17,7 @@ public class FileWriterGUITest {
 
 	File f = new File("test.fw").getAbsoluteFile();
 
-	public static final int[] testArray = {1,5,23,57,128,-0,42,16,9,33};
-	public static int[] testRandomArray = new int[10];
+	public static final int[] testArray = {1,5,23,57,128,-0,42};
 
 	private class TestClass implements ISaveAble, ISaveAbleFactory<TestClass>{
 
@@ -65,16 +63,7 @@ public class FileWriterGUITest {
 		for(int i = 0;i<tests.length;i++){
 			tests[i] = new TestClass(testArray[i]);
 		}
-		FW.add(tests, "arr");
-
-		Random random = new Random();
-		tests = new TestClass[testArray.length];
-
-		for(int i = 0;i<testRandomArray.length;i++){
-			tests[i] = new TestClass(testRandomArray[i] = random.nextInt());
-		}
-		FW.add(tests, "arrRand");
-
+		FW.add(tests,"arr");
 		try {
 			FW.writeToFile(f);
 		} catch(IOException e) {
@@ -125,19 +114,6 @@ public class FileWriterGUITest {
 
 		for(int i=0;i<tests.length;i++){
 			assert tests[i].val==testArray[i];
-		}
-	}
-
-	@Test
-	public void testRandomArray() throws Exception {
-		FileWriter FW = getFileWriter();
-
-		TestClass[] tests = FW.getArray("arrRand", new TestClass());
-
-		assert tests.length == testArray.length;
-
-		for(int i = 0; i < tests.length; i++) {
-			assert tests[i].val == testRandomArray[i];
 		}
 	}
 }
