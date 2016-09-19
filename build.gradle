@@ -15,9 +15,30 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
-def lib = file('build/libs/'+rootProject.name+"-"+version+".jar")
+
+task compJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'BBLib',
+                'Implementation-Version': version
+    }
+    archiveName = project.name + ".jar"
+    with jar
+}
+
+task srcJar(type: Jar){
+    manifest {
+        attributes 'Implementation-Title': 'BBLib',
+                'Implementation-Version': version
+    }
+    archiveName = project.name + "-src.jar"
+    from sourceSets.main.allSource
+}
+
+def lib = file('build/libs/' + rootProject.name + "-" + version + ".jar")
 
 artifacts {
     archives lib
 }
+
+
 

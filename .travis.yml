@@ -1,10 +1,18 @@
 language: java
-
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 install:
-  - gradle assemble
-
+- gradle assemble
 script:
-  - gradle check
+- gradle check
+- gradle jar
+deploy:
+  provider: releases
+  api_key:
+    secure: Gv+Pb7iazmibzhO7/YDzFvZvCAcSEpxMo4ojPdufK6Woe/GSCwFgRREON6j2d3O4r+TAk2SSx1xUI3ASHPN6Wzy3mOgYTm2qcQRkJXSN3O6FY4gJ2Voj9fpmdPPtyIe9YrLNzXybdS4PxS91CdIlOZGfxUjnbcY23pVLF04tEjWTb4rA0YIB5VV3Cwb725zryKbi1MhiPzeFO+ow7ipqFRvZ89YV60krmzgv45juSz8ApmfJES5j+mVcXNKUibQm8BTmU6YH0J2kFL61uvS0HBrOYvgyVk06/M5741cMxIvpx2P/05uwogTiNNg0pJH60/iYxkggzIuAfCmpcmDsgC7LI+K3KDQsvHB/WeryTCRAB88jG6+6AmjuTA+dNQ78AC+NGa2zniydgjk+s8IPY9pVcCsgbiZkNJbewfrrS9CFYYSVzeftKroOysXo8QNRbd6DCsrEJTVAzOAcXBDm9vunt7pCRG/LVVSULV4xE0vbgQRyGzHzK5CN4+DhJ3dEePZtulALX9IPvfYrAv4gqhTryPephy5GQKh81uf9fD0QRKeI5X1UKUyVgFRJ9DBS4agi+f+wC6mlDZQLm66NE839ltqy7RJXLp0xLGP3RXdqFX7ust/vHmtM4HASzM/YfQtp2x757MHj1xfoX96mt4sHnjmbgIU2IqD0XZqyUMo=
+  file:
+    - "build/libs/bblib.jar"
+    - "build/libs/bblib-src.jar"
+  on:
+    tags: true
+    repo: BB20101997/BBLib
