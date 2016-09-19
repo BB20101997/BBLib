@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 public class BasicIOHandler implements Runnable, IIOHandler {
 
 	private final static Logger log;
+	
 	static{
 		log = Logger.getLogger(BasicIOHandler.class.getName());
 		log.addHandler(new BBLogHandler(Constants.getBBLibLogFile()));

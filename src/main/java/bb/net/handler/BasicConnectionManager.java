@@ -5,8 +5,7 @@ import bb.net.enums.ServerStatus;
 import bb.net.enums.Side;
 import bb.net.interfaces.*;
 import bb.net.packets.DataOut;
-import bb.net.packets.PacketDistributor;
-import bb.net.packets.PacketRegistrie;
+import bb.net.packets.PacketManager;
 import bb.net.packets.connecting.DisconnectPacket;
 import bb.net.server.ConnectionListener;
 import bb.util.event.EventHandler;
@@ -36,7 +35,10 @@ public class BasicConnectionManager implements IConnectionManager {
 	private final List<IIOHandler> connections    = new ArrayList<>();
 	private       int              maxConnections = 20;
 
+	protected IPacketManager packetManager;
+	@Deprecated
 	protected IPacketRegistrie   packetRegistrie;
+	@Deprecated
 	protected IPacketDistributor packetDistributor;
 
 	protected List<EventHandler<IConnectionEvent>> IConnectionEventHandlerList = new ArrayList<>();
@@ -67,7 +69,7 @@ public class BasicConnectionManager implements IConnectionManager {
 				e.printStackTrace();
 			}
 			//may cause a loop when the PacketHandler sends back a Packet to the sender!
-			getPacketDistributor().distributePacket(packetRegistrie.getID(p.getClass()), dao.getBytes(), LOCAL);
+			getPacketManager().distributePacket(getPacketManager().getID(p.getClass()), dao.getBytes(), LOCAL);
 			return true;
 		}
 
@@ -88,7 +90,7 @@ public class BasicConnectionManager implements IConnectionManager {
 	//the Server connection on the Clients side, a loopback on the Servers side
 	protected IIOHandler SERVER;
 	//server or client?
-	private Side       side;
+	private final Side       side;
 	//for broadcasts
 	private IIOHandler ALL = new IIOHandler() {
 		@Override
@@ -138,20 +140,28 @@ public class BasicConnectionManager implements IConnectionManager {
 
 	protected ConnectionListener conLis;
 
+	//init all client side
 	public BasicConnectionManager() {
-		log.log(Level.INFO, "Constructor");
-		packetRegistrie = new PacketRegistrie();
-		packetDistributor = new PacketDistributor(this);
-		packetDistributor.registerPacketHandler(new DefaultPacketHandler(this));
-		side = Side.CLIENT;
+		this(Side.CLIENT);
 	}
 
+	//init all server side
 	public BasicConnectionManager(int port){
-		this();
-		side = Side.SERVER;
+		this(Side.SERVER);
 		SERVER = LOCAL;
 		conLis = new ConnectionListener(port, this);
 		new Thread(conLis).start();
+	}
+
+	//init all side irrelevant
+	private BasicConnectionManager(Side s){
+		log.log(Level.INFO, "Constructor");
+		packetManager = new PacketManager(this);
+		packetRegistrie = packetManager;
+		packetDistributor = packetManager;
+		packetDistributor.registerPacketHandler(new DefaultPacketHandler(this));
+		side = s;
+
 	}
 
 	public void shutdown() {
@@ -178,13 +188,8 @@ public class BasicConnectionManager implements IConnectionManager {
 	}
 
 	@Override
-	public IPacketRegistrie getPacketRegistrie() {
-		return packetRegistrie;
-	}
-
-	@Override
-	public IPacketDistributor getPacketDistributor() {
-		return packetDistributor;
+	public IPacketManager getPacketManager() {
+		return packetManager;
 	}
 
 	@Override
@@ -219,14 +224,13 @@ public class BasicConnectionManager implements IConnectionManager {
 			if(SERVER != null) {
 				SERVER.sendPacket(p);
 			} else {
-				log.log(Level.FINE,"SERVER is equivalent to null when sending Package!");
+				log.log(Level.FINE,"SERVER is equivalent to null when sending Package! Packet will be dropped!");
 			}
 		} else {
 			if(target!=null){
-			target.sendPacket(p);
-		}else{
-				log.log(Level.FINE, "Target is equivalent to null when sending Package!");
-				throw new RuntimeException("Null target critical failure!");
+				target.sendPacket(p);
+			}else{
+				log.log(Level.FINE, "Target is equivalent to null when sending Package! Packet will be dropped!");
 			}
 		}
 	}
