@@ -6,6 +6,9 @@ install:
 script:
 - gradle check
 - gradle jar
+before_deploy:
+  - gradle compJar
+  - gradle srcJar
 deploy:
   provider: releases
   api_key:
