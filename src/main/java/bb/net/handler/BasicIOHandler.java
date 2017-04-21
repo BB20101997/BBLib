@@ -159,7 +159,6 @@ public class BasicIOHandler implements Runnable, IIOHandler {
 			} catch(Exception e) {
 				sendPacket(new DisconnectPacket());
 				log.severe("Exception in run, closing connection!");
-				e.printStackTrace();
 				continueLoop = false;
 			}
 		}
