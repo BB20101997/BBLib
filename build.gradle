@@ -34,7 +34,7 @@ task srcJar(type: Jar){
     from sourceSets.main.allSource
 }
 
-def lib = file('build/libs/' + rootProject.name + "-" + version + ".jar")
+def lib = file('build/libs/' + name + "-" + version + ".jar")
 
 artifacts {
     archives lib
